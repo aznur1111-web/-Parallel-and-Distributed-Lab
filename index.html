@@ -1,0 +1,1362 @@
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><meta name="description" content="AZNUR Parallel &amp; Distributed Lab, a single-file course for parallel and distributed algorithms"><title>AZNUR Parallel &amp; Distributed Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#111722;--panel:#192230;--panel2:#202b3a;--panel3:#141c27;--line:#2c394b;--line2:#3b4b61;--text:#e8eef7;--muted:#a7b4c7;--subtle:#8190a5;--accent:#f59e0b;--strong:#ffd38a;--good:#9ed7bd;--warn:#edc477;--bad:#ff929e;--shadow:none;--radius:13px}
+:root[data-theme=light]{color-scheme:light;--bg:#f4f6f8;--panel:#fff;--panel2:#f7f9fb;--panel3:#f0f4f8;--line:#dce2e9;--line2:#cbd4df;--text:#17212d;--muted:#596a7e;--subtle:#718197;--accent:#a86400;--strong:#824b00;--good:#176b4c;--warn:#8c5c04;--bad:#b33143;--shadow:0 8px 24px rgba(20,35,50,.05)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button,a,select{touch-action:manipulation}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}a{color:var(--accent);text-decoration:none}.muted{color:var(--muted)}.mono,code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.topbar{height:64px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text)}.brand-mark{width:34px;height:34px;border:1px solid var(--line2);border-radius:10px;background:var(--panel2);display:grid;place-items:center;color:var(--strong);font-weight:850;font-size:13px}.brand strong{display:block;font-size:14px;line-height:1.2}.brand small{display:block;font-size:10px;letter-spacing:.14em;color:var(--muted);margin-top:2px}
+.top-meta{flex:1;color:var(--subtle);font-size:12px;letter-spacing:.02em}
+.top-actions{display:flex;align-items:center;gap:7px}.top-actions label{font-size:11px;color:var(--muted)}
+select,.btn{border:1px solid var(--line2);background:var(--panel3);color:var(--text);border-radius:8px;padding:8px 11px;font-size:12px}.btn{font-weight:600;white-space:nowrap}.btn:hover{border-color:var(--accent);color:var(--strong)}.btn.primary{background:var(--accent);color:#10203a;border-color:var(--accent)}:root[data-theme=light] .btn.primary{color:white}
+.layout{display:grid;grid-template-columns:264px minmax(420px,1fr);max-width:1500px;margin:auto;min-height:calc(100vh - 64px)}
+.sidebar{position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column}
+.side-title{display:flex;justify-content:space-between;color:var(--subtle);font-size:10px;letter-spacing:.14em;font-weight:800;padding:0 4px 12px}
+.pill,.tag{border:1px solid var(--line2);border-radius:6px;padding:3px 7px;font-size:10px;color:var(--muted);white-space:nowrap}
+.search{display:flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:9px;background:var(--panel3);height:39px;padding:0 10px;margin-bottom:10px}
+.search input{min-width:0;width:100%;background:transparent;border:0;outline:0;color:var(--text);font-size:12px}
+.search kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--subtle);font-size:10px}
+.filter{display:block;color:var(--subtle);font-size:11px;margin-bottom:12px}.filter select{display:block;width:100%;max-width:none;margin-top:5px;padding:7px}
+.tree{display:flex;flex-direction:column;gap:12px}
+.group-label{display:flex;justify-content:space-between;color:var(--subtle);font-size:10px;font-weight:800;letter-spacing:.08em;padding:4px 5px}
+.link{width:100%;text-align:left;display:flex;gap:8px;align-items:center;background:transparent;border:1px solid transparent;color:var(--muted);padding:7px 8px;border-radius:8px;min-height:34px}
+.link .num{font:10px ui-monospace,monospace;color:var(--subtle);width:19px;flex:none}
+.link .name{font-size:12px;flex:1}.link .done{color:var(--good)}
+.link:hover{background:var(--panel2);color:var(--text)}
+.link.active{background:var(--panel2);border-color:var(--line2);color:var(--strong)}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.progress-row{display:flex;justify-content:space-between;color:var(--subtle);font-size:11px;margin-bottom:7px}
+.progress{height:5px;background:var(--panel2);border-radius:9px;overflow:hidden}.progress>div{height:100%;width:0;background:var(--accent);transition:width .25s}
+.side-actions{display:flex;gap:6px;margin-top:12px}.side-actions .btn{flex:1;padding:7px;font-size:11px}
+main{max-width:920px;width:100%;min-width:0;margin:auto;padding:28px 30px 40px}
+.breadcrumb{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:16px}
+.header{padding:2px 2px 22px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:800;color:var(--accent);margin-bottom:9px}
+.header h1{font-size:clamp(27px,3vw,36px);line-height:1.12;letter-spacing:-.035em;margin:0 0 10px;font-weight:700}
+.header p{font-size:14.5px;color:var(--muted);margin:0 0 14px;max-width:740px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag.good{color:var(--good)}.tag.warn{color:var(--warn)}
+.header-actions{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.panel-head{padding:18px 20px 0}.panel-head h2{font-size:15px;margin:0 0 4px;letter-spacing:-.01em;font-weight:650}.panel-head p{font-size:12.5px;color:var(--muted);margin:0}
+.body{padding:16px 20px 20px}
+.idea{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:20px}
+.idea p{font-size:13.5px;color:var(--muted);margin:0 0 13px}
+.mental{background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:13px}
+.mental small{color:var(--subtle);font-size:10px;letter-spacing:.11em;text-transform:uppercase}
+.mental strong{display:block;margin:6px 0;font-size:13px;color:var(--strong)}
+.mental p{font-size:12px;color:var(--muted);margin:0}
+.takeaway{padding:11px 13px;border:1px solid var(--line2);background:var(--panel3);border-radius:8px;color:var(--strong);font-size:12.5px;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mini{background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:13px}
+.mini h3{font-size:12px;margin:0 0 7px;font-weight:650}
+.mini p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.steps li{counter-increment:s;display:flex;gap:10px;color:var(--muted);font-size:12.5px;line-height:1.55}
+.steps li:before{content:counter(s);width:23px;height:23px;flex:none;display:grid;place-items:center;border:1px solid var(--line2);background:var(--panel3);border-radius:6px;color:var(--accent);font:11px ui-monospace,monospace}
+.pseudo{white-space:pre-wrap;overflow:auto;background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:14px;font:12px/1.75 ui-monospace,monospace;color:var(--strong);margin:0}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:9px 10px;vertical-align:top}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:700}
+td{color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{padding:12px;background:var(--panel3);border:1px solid var(--line);border-radius:9px}
+.tile span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle)}
+.tile strong{display:block;color:var(--strong);font:700 14px ui-monospace,monospace;margin-top:6px}
+.tile small{font-size:10.5px;color:var(--muted);display:block;margin-top:2px}
+.notice{padding:12px 13px;background:var(--panel3);border:1px solid color-mix(in srgb,var(--warn) 35%,var(--line));border-radius:9px;font-size:12.5px;color:var(--muted);line-height:1.65}
+.notice strong{color:var(--warn)}
+.notice.info{border-color:var(--line2)}.notice.info strong{color:var(--accent)}
+.lab-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lab-top label{font-size:11.5px;color:var(--muted)}
+.lab-input{width:100%;min-height:80px;resize:vertical;background:var(--panel3);border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.65 ui-monospace,monospace;margin:11px 0}
+.lab-output{padding:13px;background:var(--panel3);border:1px solid var(--line);border-radius:9px;min-height:70px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--strong);font:12px/1.75 ui-monospace,monospace;overflow-x:auto}
+.lab-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.label{font-size:10px;color:var(--subtle);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.code-head{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:11px 13px;background:var(--panel3);border-bottom:1px solid var(--line)}
+.code-editor{display:block;width:100%;min-height:220px;resize:vertical;border:0;border-radius:0;background:var(--panel3);color:var(--text);padding:15px;font:12px/1.7 ui-monospace,monospace;outline:0}
+.code-foot{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 13px;color:var(--subtle);font-size:10px;border-top:1px solid var(--line)}
+.practice{border:1px solid var(--line);background:var(--panel3);border-radius:9px;padding:13px}
+.practice summary{cursor:pointer;font-size:12.5px;font-weight:600}
+.practice p{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.65}
+.references{display:flex;flex-direction:column;gap:8px}
+.references a{font-size:12.5px;overflow-wrap:anywhere}
+.home-hero{padding:30px;background:linear-gradient(150deg,var(--panel),var(--panel3));border:1px solid var(--line);border-radius:14px;margin-bottom:16px}
+.home-hero h1{font-size:clamp(30px,3.6vw,42px);line-height:1.1;letter-spacing:-.04em;margin:8px 0 14px;font-weight:700}
+.home-hero p{color:var(--muted);font-size:14px;max-width:720px;margin:0 0 18px;line-height:1.65}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat strong{display:block;font:700 22px ui-monospace,monospace;color:var(--strong)}
+.stat span{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.chapter-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chapter-card{padding:14px;text-align:left;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}
+.chapter-card:hover{border-color:var(--accent)}
+.chapter-card .num{font-size:10px;color:var(--accent);letter-spacing:.09em;font-weight:800}
+.chapter-card strong{display:block;font-size:13px;margin:5px 0;font-weight:650}
+.chapter-card p{font-size:11.5px;color:var(--muted);margin:0;line-height:1.55}
+.toast{position:fixed;z-index:99;bottom:20px;left:50%;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:11px 15px;box-shadow:var(--shadow);font-size:12px;transition:opacity .14s,transform .14s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.footer{font-size:10.5px;color:var(--subtle);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 2px 14px;align-items:center}
+.plot{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--line);border-radius:8px;margin:6px 0}
+@media(max-width:1080px){.layout{grid-template-columns:240px minmax(360px,1fr)}main{padding:24px 22px 36px}}
+@media(max-width:840px){.topbar{height:auto;min-height:60px;flex-wrap:wrap;gap:10px;padding:10px 14px}.top-meta{display:none}.top-actions{margin-left:auto}.top-actions label{display:none}.layout{display:block}.sidebar{position:static;height:auto;max-height:none;border:0;border-bottom:1px solid var(--line);padding:14px}.tree{max-height:260px;overflow:auto}.side-foot{display:none}main{padding:20px 15px 32px}.idea{grid-template-columns:1fr}.mental{order:-1}.stats{grid-template-columns:1fr 1fr}.chapter-cards,.two,.lab-cols{grid-template-columns:1fr}}
+@media(max-width:520px){.brand small{display:none}.brand-mark{width:30px;height:30px}.brand strong{font-size:12px}.top-actions select{max-width:92px;padding:6px;font-size:10px}.top-actions .btn{padding:6px 8px;font-size:10px}.chapter-cards{grid-template-columns:1fr}.tiles{grid-template-columns:1fr}.home-hero{padding:20px}.home-hero h1{font-size:30px}.header h1{font-size:27px}.body,.panel-head{padding-left:15px;padding-right:15px}.footer{display:block}.footer span{display:block;margin-bottom:6px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+@media print{.topbar,.sidebar,.header-actions,.lab-top,.btn,.toast{display:none!important}.layout{display:block}main{padding:0;max-width:none}.panel,.home-hero{break-inside:avoid;box-shadow:none}body{background:#fff;color:#111}}
+
+.hidden{display:none!important}.tabs{display:flex;gap:5px;flex-wrap:wrap;margin:0 0 16px;border-bottom:1px solid var(--line);padding-bottom:8px}.tab{border:1px solid transparent;border-radius:8px;padding:8px 11px;background:transparent;color:var(--muted);font-size:12px;font-weight:650}.tab:hover{background:var(--panel2);color:var(--text)}.tab.active{background:var(--panel2);border-color:var(--line2);color:var(--strong)}.code-view{margin:0;padding:15px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--panel3);color:var(--text);font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace}.field-label{display:block;color:var(--muted);font-size:11px;margin:16px 0 6px}.note-input{width:100%;min-height:84px;border:1px solid var(--line2);border-radius:9px;background:var(--panel3);color:var(--text);padding:10px;font:12px/1.6 ui-monospace,monospace}.empty{padding:12px;font-size:12px}.progress-link{margin:5px 0}.lab-note{font-size:11px;line-height:1.55}.progress-chapter{width:100%}.progress-chapter .progress{margin-top:8px}.practice{margin:2px 0}.practice p{white-space:normal}.btn:disabled{opacity:.4;cursor:not-allowed}.references a:hover{text-decoration:underline}.header-actions button:focus-visible,.tab:focus-visible{outline-offset:3px}
+@media(max-width:520px){.tabs{gap:3px}.tab{padding:7px 8px;font-size:11px}.code-view{font-size:11px}}
+</style></head><body>
+
+<header class="topbar">
+  <a class="brand" href="#home" id="homeLink"><span class="brand-mark">Az</span><span><strong>AZNUR Parallel &amp; Distributed Lab</strong><small>PARALLEL · DISTRIBUTED ALGORITHMS</small></span></a>
+  <div class="top-meta" id="catalogCount"></div>
+  <div class="top-actions">
+    <label for="themeSelect">Theme</label>
+    <select id="themeSelect" aria-label="Theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    <button class="btn" id="printBtn">Print / PDF</button>
+    <button class="btn" id="exportBtn">Export</button>
+    <button class="btn" id="importBtn">Import</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" aria-label="Course navigation">
+    <div class="side-title"><span>COURSE CATALOG</span><span class="pill" id="lessonCount">0</span></div>
+    <div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search parallel topics…" aria-label="Search lessons"><kbd>/</kbd></div>
+    <label class="filter">Chapter<select id="chapterFilter"><option value="all">All chapters</option></select></label>
+    <nav class="tree" id="courseTree" aria-label="Lessons"></nav>
+    <div class="side-foot">
+      <div class="progress-row"><span>COURSE PROGRESS</span><strong id="progressText">0 / 0</strong></div>
+      <div class="progress" id="progressBar"><div id="progressFill"></div></div>
+      <div class="side-actions"><button class="btn" data-page="home">Home</button><button class="btn" data-page="progress">Progress</button></div>
+    </div>
+  </aside>
+  <main id="mainView" tabindex="-1" aria-live="polite"></main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   Az Parallel & Distributed Lab
+   ============================================================ */
+const CHAPTERS=[
+ {id:"foundations",title:"1. Parallel foundations",desc:"Concurrency vs parallelism, work/span, Amdahl, Gustafson, race conditions.",ids:["concurrency-parallelism","amdahl-gustafson","race-conditions"]},
+ {id:"primitives",title:"2. Parallel primitives",desc:"Map, reduce, scan, Blelloch, Hillis-Steele, list ranking.",ids:["map-reduce","scan-prefix","blelloch-hillis"]},
+ {id:"shared-memory",title:"3. Shared-memory coordination",desc:"Mutexes, semaphores, barriers, condition variables, atomics, CAS.",ids:["mutex-semaphore","barriers-conditions","atomics-cas"]},
+ {id:"work-distribution",title:"4. Parallel work distribution",desc:"Fork-join, work stealing, task graphs, bulk-synchronous parallel.",ids:["fork-join","work-stealing","bsp"]},
+ {id:"parallel-numerical",title:"5. Parallel numerical computing",desc:"Parallel reduction, matrix multiplication, Cannon, SUMMA, domain decomposition.",ids:["parallel-reduction","parallel-matmul","domain-decomposition"]},
+ {id:"data-processing",title:"6. Distributed data processing",desc:"MapReduce, dataflow, Spark execution, partitioning, shuffle, combiners.",ids:["mapreduce","spark-dataflow","partitioning-shuffle"]},
+ {id:"clocks",title:"7. Distributed clocks and snapshots",desc:"Lamport clocks, vector clocks, hybrid logical clocks, Chandy-Lamport.",ids:["lamport-vector","hlc","chandy-lamport"]},
+ {id:"consensus",title:"8. Consensus and replication",desc:"Paxos, Raft, Viewstamped Replication, Zab, EPaxos, chain replication.",ids:["paxos","raft","vr-zab","chain-replication"]},
+ {id:"transactions",title:"9. Transactions and membership",desc:"2PC, 3PC, SWIM, phi-accrual, anti-entropy.",ids:["two-three-phase-commit","swim-phi","anti-entropy"]},
+ {id:"byzantine",title:"10. Byzantine fault tolerance",desc:"PBFT, HotStuff, quorum certificates, Casper FFG, fault models.",ids:["pbft","hotstuff","quorum-faults"]},
+ {id:"naming",title:"11. Distributed naming and coordination",desc:"Consistent hashing, Chord, Kademlia, leader election, bully, Chang-Roberts.",ids:["consistent-hashing","chord","kademlia","leader-election"]},
+ {id:"memory-collab",title:"12. Memory reclamation and collaboration",desc:"RCU, hazard pointers, epoch reclamation, OT, CRDTs.",ids:["rcu-hazard","epoch-reclamation","ot-crdt"]}
+];
+
+const D={
+ kind:"Concept",status:"Concept lesson",level:2,demo:"none",demoTitle:"Interactive teaching lab",refs:[],codeKey:"generic",
+ input:"A set of processes, tasks or messages plus the parameters of the algorithm.",
+ output:"A schedule, a consistent state, an agreement or a replicated value.",
+ invariant:"The algorithm's correctness relies on the fault model and the timing assumptions. Breaking them produces incorrect results or no progress.",
+ complexity:["Depends on the number of processes and messages","Depends on message size","Measure on representative workloads"],
+ uses:"Use this as one layer inside a larger parallel or distributed system.",
+ strength:"Fits the problem when its assumptions hold.",
+ limits:"Depends on failures, latency, partial synchrony and message loss.",
+ pitfall:"A protocol that is correct in the synchronous model can fail under partial synchrony.",
+ question:"What is the main idea of this lesson?",
+ trace:null
+};
+function mk(o){
+ const steps=o.steps||["Read the input.","Apply the protocol.","Produce the output.","Check the invariant."];
+ return Object.assign({},D,{
+  summary:o.summary||"",
+  mental:o.mental||o.title,
+  mentalText:o.mentalText||o.summary||"",
+  problem:o.problem||("How does "+o.title+" work and when is it the right choice?"),
+  steps:steps,
+  trace:o.trace||steps.map((s,i)=>["Step "+(i+1),s,i===steps.length-1?"Verified":"Step done"]),
+  answer:o.answer||o.summary||"",
+  pseudo:o.pseudo||"",
+  sample:o.sample||"",
+  level:o.level||2
+ },o);
+}
+
+const RAW=[
+/* Ch 1 */
+{id:"concurrency-parallelism",title:"Concurrency vs parallelism",level:1,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"Concurrency is about dealing with many things at once. Parallelism is about doing many things at once. Concurrency structures code; parallelism executes it faster.",
+ mental:"A single chef juggling tasks versus many chefs cooking",
+ mentalText:"A concurrent system has many tasks in progress. A parallel system runs them at the same time on multiple cores. You can have either without the other.",
+ steps:["Identify the tasks in the system.","Decide whether they need to overlap in time.","If they do, structure them concurrently.","If they need to run faster, add hardware and parallelize.","Measure speedup, don't assume it."],
+ pseudo:"Concurrency:\n  multiple tasks in progress, interleaved on one core\n  goal: responsiveness, structure, isolation\n\nParallelism:\n  multiple tasks running at the same time\n  goal: speedup, throughput\n\nAmdahl's law:\n  speedup(P) = 1 / (s + p / P)\n  s = serial fraction, p = parallel fraction, s + p = 1\n\nGustafson's law:\n  scaled speedup(P) = s + p * P\n  how much more work you can do in fixed time\n\nWork and span:\n  work W = total operations\n  span S = longest dependency chain\n  parallelism = W / S",
+ uses:"Every modern software system. Concurrency for structure, parallelism for speed.",
+ strength:"Separates two concerns: how code is structured and how it runs.",
+ limits:"Both add complexity and new failure modes.",
+ pitfall:"Adding threads does not always speed things up. Contention, synchronization and serial sections limit gains.",
+ question:"What is the difference between concurrency and parallelism?",
+ answer:"Concurrency is having multiple tasks in progress at once. Parallelism is executing multiple tasks at the same instant on separate hardware.",
+ demo:"amdahl",sample:"0.1\n4\n16",refs:[
+  ["Amdahl, Validity of the single processor approach to achieving large scale computing capabilities, AFIPS 1967","https://doi.org/10.1145/1465482.1465560"],
+  ["Gustafson, Reevaluating Amdahl's law, CACM 1988","https://doi.org/10.1145/42411.42415"],
+  ["Herlihy and Shavit, The Art of Multiprocessor Programming, 2nd ed., Morgan Kaufmann 2020","https://www.sciencedirect.com/book/9780124159501/the-art-of-multiprocessor-programming"]]},
+{id:"amdahl-gustafson",title:"Amdahl's and Gustafson's laws",level:2,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"Amdahl's law bounds speedup for a fixed problem size. Gustafson's law gives the scaled speedup when the problem grows with the hardware.",
+ mental:"The serial part is a ceiling on speedup",
+ mentalText:"If 10% of the work must run serially, no amount of parallelism can give more than 10x speedup, no matter how many cores you use.",
+ steps:["Measure or estimate the serial fraction s.","Compute speedup(P) = 1 / (s + (1-s)/P).","For scaled speedup, use Gustafson: s + (1-s) * P.","Choose core count based on the actual limit."],
+ pseudo:"Amdahl's law (fixed size):\n  T(1) = s + (1 - s)\n  T(P) = s + (1 - s) / P\n  speedup(P) = T(1) / T(P) = 1 / (s + (1-s)/P)\n\nLimit as P -> infinity: 1 / s\n\nGustafson's law (scaled size):\n  speedup_scaled(P) = s + (1 - s) * P\n\nWork and span:\n  work W, span S\n  parallelism P = W / S\n  speedup on unlimited processors <= P",
+ uses:"Capacity planning, choosing core count, understanding scaling limits.",
+ strength:"Simple formulas that guide design decisions.",
+ limits:"Real systems have overhead that the simple formulas ignore.",
+ pitfall:"Amdahl's law assumes a fixed problem size. If the problem grows with the hardware, Gustafson gives a more useful bound.",
+ question:"If the serial fraction is 5%, what is the maximum speedup?",
+ answer:"20x. 1 / 0.05 = 20.",
+ demo:"amdahl",sample:"0.1\n4\n16",refs:[
+  ["Amdahl, Validity of the single processor approach, AFIPS 1967","https://doi.org/10.1145/1465482.1465560"],
+  ["Gustafson, Reevaluating Amdahl's law, CACM 1988","https://doi.org/10.1145/42411.42415"],
+  ["Hill, Marty, Mark, et al., Amdahl's law in the multicore era, IEEE Computer 2008","https://doi.org/10.1109/MC.2008.209"]]},
+{id:"race-conditions",title:"Race conditions and data races",level:3,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"A data race occurs when two threads access the same memory location concurrently and at least one writes, without synchronization. A race condition is a broader bug where the result depends on timing.",
+ mental:"Two threads tripping over each other",
+ mentalText:"If two threads increment the same counter without a lock, the final value depends on the exact interleaving. Both increments read and write, and one can overwrite the other.",
+ steps:["Identify shared mutable state.","Check every access for synchronization.","Use atomics, locks or thread-local state.","Test under stress and with sanitizers."],
+ pseudo:"Data race: two threads access the same location, at least one writes,\n           no synchronization.\n\nRace condition: a broader timing-dependent bug.\n\nExample (broken counter):\n  counter = 0   shared\n  thread A: counter += 1\n  thread B: counter += 1\n\n  The read-modify-write is not atomic.\n  Possible interleavings:\n    A read 0, B read 0, A write 1, B write 1 -> 1 (lost update)\n    A read 0, A write 1, B read 1, B write 2 -> 2 (correct)\n\nFixes:\n  atomic increment\n  mutex around the counter\n  per-thread counters, summed at the end\n\nTools:\n  ThreadSanitizer, Helgrind, race condition detectors",
+ uses:"Every concurrent program. Detecting races is hard; preventing them is easier.",
+ strength:"Recognizing races is the first step to fixing them.",
+ limits:"Not all races are data races. Atomicity, order and visibility are separate concerns.",
+ pitfall:"A test that passes today can fail tomorrow under different load. Race conditions are often non-deterministic.",
+ question:"What is a data race?",
+ answer:"Two threads accessing the same memory location concurrently, at least one writing, without synchronization.",
+ demo:"race",sample:"1000\n8",refs:[
+  ["Adve and Gharachorloo, Shared memory consistency models: a tutorial, IEEE Computer 1996","https://doi.org/10.1109/2.546611"],
+  ["Boehm and Adve, Foundations of the C++ concurrency memory model, PLDI 2008","https://doi.org/10.1145/1375581.1375591"],
+  ["Herlihy and Shavit, The Art of Multiprocessor Programming, Chapter 1","https://www.sciencedirect.com/book/9780124159501/the-art-of-multiprocessor-programming"]]},
+/* Ch 2 */
+{id:"map-reduce",title:"Map and reduce",level:2,kind:"Parallel primitive",status:"Runnable teaching lab",
+ summary:"Map applies a function to every element independently. Reduce combines elements into a single value using an associative operation. Together they express most parallel data processing.",
+ mental:"Apply and combine",
+ mentalText:"Map is embarrassingly parallel: every element is independent. Reduce needs associativity so you can combine in any grouping.",
+ steps:["Split the data into chunks.","Map each chunk independently.","Combine partial results with an associative reduce.","Return the final value."],
+ pseudo:"map(f, [x1, x2, ..., xn]) = [f(x1), f(x2), ..., f(xn)]\n\nreduce(op, [x1, ..., xn]) = x1 op x2 op ... op xn\n  op must be associative: (a op b) op c = a op (b op c)\n  if op is also commutative, order does not matter\n\nParallel reduce (tree):\n  level 1: combine adjacent pairs\n  level 2: combine pairs of pairs\n  ...\n  log n levels, n/2 + n/4 + ... = n - 1 combines\n\nMapReduce (Google 2004):\n  map(k1, v1) -> list(k2, v2)\n  reduce(k2, list(v2)) -> list(v3)\n  shuffle groups by key between map and reduce",
+ uses:"Data parallel languages, GPU kernels, Spark RDDs, Hadoop MapReduce, MapReduce-style frameworks.",
+ strength:"Map is trivially parallel. Reduce parallelizes with a tree.",
+ limits:"Reduce requires an associative operation. Non-associative float addition gives different results depending on tree shape.",
+ pitfall:"Floating-point addition is not associative. Changing the reduction order changes the result.",
+ question:"Why does reduce need associativity?",
+ answer:"The reduce combines partial results in any order. Without associativity, the final result depends on the grouping.",
+ demo:"reduce",sample:"1 2 3 4 5 6 7 8",refs:[
+  ["Dean and Ghemawat, MapReduce: simplified data processing on large clusters, OSDI 2004","https://research.google/pubs/pub62/"],
+  ["Blelloch, Prefix sums and their applications, CMU-CS-90-190, 1990","https://www.cs.cmu.edu/~guyb/papers/Ble93.pdf"],
+  ["Zaharia et al., Resilient distributed datasets: a fault-tolerant abstraction for in-memory cluster computing, NSDI 2012","https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia"]]},
+{id:"scan-prefix",title:"Scan and prefix sum",level:3,kind:"Parallel primitive",status:"Runnable teaching lab",
+ summary:"A scan computes the running prefix of an operation over a sequence. The exclusive scan gives prefix sums; the inclusive scan gives prefix sums including the current element.",
+ mental:"Running totals",
+ mentalText:"Exclusive scan of [a, b, c] with addition gives [0, a, a+b]. Inclusive gives [a, a+b, a+b+c].",
+ steps:["Choose inclusive or exclusive.","Choose an associative operator.","Apply either Hillis-Steele (fast but more work) or Blelloch (less work).","Return the prefix sequence."],
+ pseudo:"Inclusive scan: y[i] = x[0] op x[1] op ... op x[i]\nExclusive scan: y[i] = x[0] op ... op x[i-1], y[0] = identity\n\nHillis-Steele (inclusive):\n  for d = 1, 2, 4, ..., < n:\n    for i in parallel:\n      if i >= d: y[i] = y[i-d] op y[i]\n  work: O(n log n), span: O(log n)\n\nBlelloch (work-efficient):\n  up-sweep (reduce): O(n) work, O(log n) span\n  down-sweep: O(n) work, O(log n) span\n  total: O(n) work, O(log n) span\n\nApplications:\n  prefix sums, compaction, stream compaction,\n  radix sort digit counts, quicksort partitioning, polynomial evaluation",
+ uses:"Parallel sorting, compaction, radix sort, GPU libraries, functional programming.",
+ strength:"Reduces a sequential O(n) loop to a parallel O(log n) depth computation.",
+ limits:"Two scans (Blelloch) are more work-efficient but more complex than Hillis-Steele.",
+ pitfall:"Exclusive vs inclusive off-by-one. Always double-check the definition used by your library.",
+ question:"What is the work and span of the Blelloch scan?",
+ answer:"Work is O(n), span is O(log n).",
+ demo:"scan",sample:"3 1 4 1 5 9 2 6",refs:[
+  ["Blelloch, Prefix sums and their applications, CMU-CS-90-190, 1990","https://www.cs.cmu.edu/~guyb/papers/Ble93.pdf"],
+  ["Hillis and Steele, Data parallel algorithms, CACM 1986","https://doi.org/10.1145/7902.7903"],
+  ["Harris, Sengupta, Owens, Parallel prefix sum (scan) with CUDA, GPU Gems 3, 2007","https://developer.nvidia.com/gpugems/gpugems3/part-vi-gpu-computing/chapter-39-parallel-prefix-sum-scan-cuda"]]},
+{id:"blelloch-hillis",title:"Blelloch vs Hillis-Steele scan",level:4,kind:"Parallel primitive",status:"Runnable teaching lab",
+ summary:"Hillis-Steele is simple with O(n log n) work. Blelloch is more complex with O(n) work but more synchronization steps.",
+ mental:"More work or more parallelism",
+ mentalText:"Hillis-Steele does more total work but has fewer dependency levels. Blelloch does less work at the cost of a more intricate pattern.",
+ steps:["Hillis-Steele: at each step d = 1, 2, 4, ..., combine y[i-d] with y[i] for i >= d.","Blelloch: up-sweep reduces partial sums, then down-sweep distributes prefixes.","Both have span O(log n).","Hillis-Steele uses O(n log n) work; Blelloch uses O(n)."],
+ pseudo:"Hillis-Steele (inclusive scan):\n  x = input\n  for d = 1; d < n; d *= 2:\n    for i in parallel 0..n-1:\n      if i >= d: x[i] += x[i-d]\n  return x\n  Work O(n log n), span O(log n)\n\nBlelloch (exclusive scan):\n  # up-sweep\n  for d = 1; d < n; d *= 2:\n    for i in parallel 0..n/d - 1:\n      x[2*i*d + 2*d - 1] += x[2*i*d + d - 1]\n  # set last to 0, then down-sweep\n  x[n-1] = 0\n  for d = n/2; d >= 1; d /= 2:\n    for i in parallel 0..n/d - 1:\n      tmp = x[2*i*d + d - 1]\n      x[2*i*d + d - 1] = x[2*i*d + 2*d - 1]\n      x[2*i*d + 2*d - 1] += tmp\n  return x\n  Work O(n), span O(log n)",
+ uses:"Parallel libraries, GPU kernels, high-performance sorting and compaction.",
+ strength:"Blelloch is work-optimal. Hillis-Steele is simpler.",
+ limits:"Both require an associative operator.",
+ pitfall:"Blelloch is exclusive. If you need inclusive, add the original element back.",
+ question:"Which scan is more work-efficient?",
+ answer:"Blelloch. It uses O(n) work versus O(n log n) for Hillis-Steele.",
+ demo:"blelloch",sample:"3 1 4 1 5 9 2 6",refs:[
+  ["Blelloch, Prefix sums and their applications, CMU-CS-90-190, 1990","https://www.cs.cmu.edu/~guyb/papers/Ble93.pdf"],
+  ["Harris, Sengupta, Owens, Parallel prefix sum (scan) with CUDA, GPU Gems 3, 2007","https://developer.nvidia.com/gpugems/gpugems3/part-vi-gpu-computing/chapter-39-parallel-prefix-sum-scan-cuda"],
+  ["Yan, Wang, Zhang, Optimizing parallel prefix on GPUs, 2016","https://doi.org/10.1109/TPDS.2015.2406878"]]},
+/* Ch 3 */
+{id:"mutex-semaphore",title:"Mutexes and semaphores",level:2,kind:"Coordination",status:"Runnable teaching lab",
+ summary:"A mutex allows only one thread into a critical section. A semaphore is a counter that blocks threads when the counter reaches zero.",
+ mental:"A key to a single room, or a set of tickets to a parking lot",
+ mentalText:"A mutex has one key. A semaphore has N tickets; when tickets are gone, waiters must wait until one is returned.",
+ steps:["Identify the critical section.","Choose a mutex for mutual exclusion, or a semaphore for counting.","Acquire before, release after.","Avoid holding the lock longer than needed."],
+ pseudo:"Mutex:\n  lock(m): wait until m is free, then take it\n  unlock(m): release m, wake one waiter\n\nSemaphore:\n  init(s, k): s starts at k\n  wait(s): if s > 0, s -= 1; else block\n  signal(s): if a thread is blocked, wake it; else s += 1\n\nBinary semaphore == mutex in behavior but not in\nall implementations.\n\nDeadlock conditions (Coffman):\n  mutual exclusion, hold and wait, no preemption, circular wait",
+ uses:"Protecting shared state, producer-consumer, resource pools, throttling.",
+ strength:"Simple primitives for coordination.",
+ limits:"Easy to misuse. Deadlock, priority inversion, and lock contention are common.",
+ pitfall:"Forgetting to release a lock on all paths (including exceptions) causes deadlock.",
+ question:"How is a semaphore different from a mutex?",
+ answer:"A mutex is binary (locked or unlocked). A semaphore has a counter and can allow N concurrent users.",
+ demo:"producer-consumer",sample:"3\n5",refs:[
+  ["Dijkstra, Cooperating sequential processes, 1965","https://www.cs.utexas.edu/users/EWD/transcriptions/EWD01xx/EWD123.html"],
+  ["Herlihy and Shavit, The Art of Multiprocessor Programming, Chapter 8","https://www.sciencedirect.com/book/9780124159501/the-art-of-multiprocessor-programming"],
+  ["Tanenbaum and Bos, Modern Operating Systems, 4th ed., Pearson 2014","https://www.pearson.com/en-us/subject-catalog/p/modern-operating-systems/P200000003292"]]},
+{id:"barriers-conditions",title:"Barriers and condition variables",level:3,kind:"Coordination",status:"Runnable teaching lab",
+ summary:"A barrier makes every thread wait until all threads arrive. A condition variable lets a thread wait for a condition to become true, releasing the lock while waiting.",
+ mental:"A finish line for all runners, or a waiting room",
+ mentalText:"At a barrier, every thread arrives before any proceeds. A condition variable is a waiting room with a signal bell.",
+ steps:["Use a barrier to synchronize phases.","Use a condition variable with a mutex to wait for a predicate.","Always re-check the predicate after waking.","Signal or broadcast when the state changes."],
+ pseudo:"Barrier:\n  arrive(b): count += 1\n  if count == N: release all waiters, reset count\n  else: wait\n\nCondition variable:\n  wait(cv, m): atomically unlock m and block; on wake, re-lock m\n  signal(cv): wake one waiter\n  broadcast(cv): wake all waiters\n\nCorrect usage:\n  lock(m)\n  while not condition:\n    wait(cv, m)\n  # predicate is true, proceed\n  unlock(m)\n\nSpurious wakeups: a wait may return without signal.\nAlways re-check the predicate in a loop.",
+ uses:"Synchronizing phases of parallel algorithms, producer-consumer queues, event handling.",
+ strength:"Express complex coordination with two primitives.",
+ limits:"Easy to miss a signal or deadlock. Correctness requires careful reasoning.",
+ pitfall:"Using if instead of while around wait(). Spurious wakeups cause wrong behavior.",
+ question:"Why do condition variable waits need a loop?",
+ answer:"Spurious wakeups can return without a signal. The predicate must be re-checked.",
+ demo:"barrier",sample:"4\n8",refs:[
+  ["Hoare, Monitors: an operating system structuring concept, CACM 1974","https://doi.org/10.1145/355620.361161"],
+  ["Herlihy and Shavit, Chapter 8 Monitors and Blocking Synchronization","https://www.sciencedirect.com/book/9780124159501/the-art-of-multiprocessor-programming"],
+  ["Coffman, Elphick, Shoshani, System deadlocks, ACM Computing Surveys 1971","https://doi.org/10.1145/356586.356588"]]},
+{id:"atomics-cas",title:"Atomic operations and compare-and-swap",level:4,kind:"Coordination",status:"Runnable teaching lab",
+ summary:"Atomic operations execute indivisibly with respect to other threads. Compare-and-swap (CAS) atomically checks a value and updates it. It is the foundation of lock-free data structures.",
+ mental:"Check and update in one indivisible step",
+ mentalText:"CAS(m, expected, new) returns true and writes new only if the current value equals expected. Otherwise it fails and you retry.",
+ steps:["Read the current value.","Compute a new value.","CAS from the old value to the new.","If CAS fails, retry from the current value."],
+ pseudo:"CAS(ptr, expected, new):\n  atomically:\n    if *ptr == expected:\n      *ptr = new; return true\n    else:\n      return false\n\nFetch-and-add:\n  atomically: old = *ptr; *ptr = old + delta; return old\n\nLock-free counter with CAS:\n  while True:\n    old = counter\n    if CAS(counter, old, old + 1): break\n\nABA problem:\n  thread 1 reads A\n  thread 2 changes A -> B -> A\n  thread 1 CAS succeeds on the recycled A\n  but the underlying state has changed\n\nSolutions: tagged pointers, hazard pointers, epoch reclamation.",
+ uses:"Lock-free data structures, GPU atomics, concurrent counters, memory allocators.",
+ strength:"Building block for lock-free and wait-free algorithms.",
+ limits:"Complex to use correctly. ABA problem is a classic pitfall.",
+ pitfall:"CAS loop with an unbounded retry can livelock under heavy contention.",
+ question:"What is the ABA problem?",
+ answer:"A CAS sees the same value A but the state has changed to B and back. The CAS succeeds even though the logical state changed.",
+ demo:"cas-counter",sample:"1000\n8",refs:[
+  ["Herlihy, Wait-free synchronization, ACM TOPLAS 1991","https://doi.org/10.1145/114005.102808"],
+  ["Herlihy and Shavit, Chapter 5 The Relative Power of Primitive Synchronization Operations","https://www.sciencedirect.com/book/9780124159501/the-art-of-multiprocessor-programming"],
+  ["Michael, Hazard pointers: safe memory reclamation for lock-free objects, IEEE TPDS 2004","https://doi.org/10.1109/TPDS.2004.8"]]},
+/* Ch 4 */
+{id:"fork-join",title:"Fork-join",level:3,kind:"Work distribution",status:"Runnable teaching lab",
+ summary:"Fork-join spawns parallel tasks and joins their results. The runtime schedules tasks on worker threads, usually with work stealing.",
+ mental:"Split the work, then combine the results",
+ mentalText:"Fork creates a new task. Join waits for the task's result. Divide and conquer parallelizes naturally this way.",
+ steps:["Split the problem into independent subtasks.","Fork each subtask.","Join each subtask to collect results.","Combine the results.","Optionally set a base-case threshold."],
+ pseudo:"fork_join(problem):\n  if problem is small:\n    solve sequentially\n  else:\n    split into (left, right)\n    l = fork(fork_join(left))\n    r = fork(fork_join(right))\n    return combine(join(l), join(r))\n\nWork and span:\n  Work T(n) = 2 T(n/2) + O(1) = O(n)\n  Span S(n) = S(n/2) + O(1) = O(log n)\n  Parallelism = T / S = O(n / log n)\n\nJava ForkJoinPool, .NET TPL, Cilk, OpenMP tasks\nall use some form of this model.",
+ uses:"Divide and conquer algorithms, parallel merge sort, quicksort, matrix multiply.",
+ strength:"Simple model for recursive parallelism.",
+ limits:"Task overhead. Small tasks do not pay off.",
+ pitfall:"Too many tiny tasks. Use a sequential base case.",
+ question:"Why is work per task important in fork-join?",
+ answer:"If tasks are too small, the scheduling overhead exceeds the work.",
+ demo:"fork-join",sample:"16\n4",refs:[
+  ["Lea, A Java fork/join framework, JavaOne 2000","https://gee.cs.oswego.edu/dl/papers/fj.pdf"],
+  ["Blumofe and Leiserson, Scheduling multithreaded computations by work stealing, JACM 1999","https://doi.org/10.1145/324133.324234"],
+  ["Frigo, Leiserson, Randall, The implementation of the Cilk-5 multithreaded language, PLDI 1998","https://doi.org/10.1145/277650.277725"]]},
+{id:"work-stealing",title:"Work stealing",level:4,kind:"Scheduling",status:"Runnable teaching lab",
+ summary:"Each worker thread has a deque of tasks. It pops from its own end. When idle, it steals from the other end of another worker's deque. This balances load with low contention.",
+ mental:"Each worker has a stack; idle workers steal from the bottom of others",
+ mentalText:"Idle workers do not sit still. They steal the oldest task from a busy worker, which is likely the biggest one.",
+ steps:["Each worker maintains a deque.","Owner pushes and pops at the bottom (local).","Thief steals from the top (remote).","Retry if the steal races with the owner."],
+ pseudo:"Owner operations (LIFO, local):\n  push_bottom(task)\n  t = pop_bottom()\n\nThief operations (FIFO, remote):\n  t = steal_top()\n\nWhy it works:\n  bottom is hot in the owner's cache\n  stealers access the top, avoiding contention\n  top of the deque holds the oldest (largest) task\n\nLoad balancing:\n  near-optimal for series-parallel computations\n  expected O(T_1 / P + T_infinity) time\n\nUsed in:\n  Java ForkJoinPool\n  Go scheduler\n  Rust Rayon\n  Intel TBB\n  Cilk, X10, Chapel",
+ uses:"Runtime systems for parallel languages, task scheduling on multicore.",
+ strength:"Near-optimal load balancing with low overhead.",
+ limits:"Steal attempts cost. Small tasks make stealing less effective.",
+ pitfall:"LIFO on the owner + FIFO on the thief is what makes stealing effective. Reversing this increases contention.",
+ question:"Why do owners and thieves take from opposite ends?",
+ answer:"Owners use the hot bottom end; thieves use the cold top end. This reduces contention and the thieves get larger tasks.",
+ demo:"work-stealing",sample:"8\n64",refs:[
+  ["Blumofe and Leiserson, Scheduling multithreaded computations by work stealing, JACM 1999","https://doi.org/10.1145/324133.324234"],
+  ["Arora, Blumofe, Plaxton, Thread scheduling for multiprogrammed multiprocessors, SPAA 1998","https://doi.org/10.1145/277651.277678"],
+  ["Lea, A Java fork/join framework, JavaOne 2000","https://gee.cs.oswego.edu/dl/papers/fj.pdf"]]},
+{id:"bsp",title:"Bulk-synchronous parallel",level:4,kind:"Model",status:"Concept lesson",
+ summary:"The BSP model organizes computation into supersteps: local computation, then communication, then a barrier. It simplifies reasoning about parallel algorithms.",
+ mental:"Compute, communicate, synchronize, repeat",
+ mentalText:"Every superstep has a compute phase, a communication phase, and a barrier. Between supersteps, the state is consistent.",
+ steps:["Each process computes locally.","Exchange messages.","Barrier synchronize.","Repeat until done."],
+ pseudo:"BSP superstep:\n  1. Local computation on local data\n  2. Communication (send/receive messages)\n  3. Barrier (all processes reach the same point)\n\nCost model:\n  cost of a superstep = w + h g + l\n  w = max work per process\n  h = max messages per process\n  g = cost per message\n  l = barrier cost\n\nAdvantages:\n  simple reasoning\n  predictable performance\n  matches BSP libraries (Pregel, Giraph)\n\nDisadvantages:\n  barriers are expensive\n  load imbalance hurts\n  no overlap of compute and communication",
+ uses:"Graph processing (Pregel), scientific computing, distributed algorithms with clear phases.",
+ strength:"Simple model that matches many real systems.",
+ limits:"Barriers limit overlap. Not ideal for fine-grained parallelism.",
+ pitfall:"Assuming the barrier is free. On large clusters it can dominate.",
+ question:"What is a superstep?",
+ answer:"A phase of local computation followed by communication and a barrier.",
+ demo:"bsp",sample:"4\n3",refs:[
+  ["Valiant, A bridging model for parallel computation, CACM 1990","https://doi.org/10.1145/79173.79181"],
+  ["Malewicz et al., Pregel: a system for large-scale graph processing, SIGMOD 2010","https://doi.org/10.1145/1807167.1807184"],
+  ["Cheatham, Fahmy, Stefanescu, Bulk synchronous parallel computing, 1996","https://doi.org/10.1007/BFb0027064"]]},
+/* Ch 5 */
+{id:"parallel-reduction",title:"Parallel reduction",level:3,kind:"Parallel numerical",status:"Runnable teaching lab",
+ summary:"Parallel reduction combines values with an associative operator using a tree. Work is O(n), span is O(log n).",
+ mental:"A tournament bracket",
+ mentalText:"Combine pairs, then pairs of pairs, until one value remains.",
+ steps:["Split the input into blocks.","Reduce each block sequentially or with another tree level.","Combine the block results with a tree.","Return the root."],
+ pseudo:"tree_reduce(a, op):\n  n = len(a)\n  while n > 1:\n    for i in parallel 0..n/2-1:\n      a[i] = op(a[2*i], a[2*i+1])\n    n = n / 2\n  return a[0]\n\nWork: O(n)\nSpan: O(log n)\n\nFor sum:\n  pairs are independent\n  order of operations affects the result for floats\n\nPractical reduction on GPUs:\n  each thread reduces a strided chunk\n  block-level tree reduce in shared memory\n  grid-level reduce with atomics or a second pass",
+ uses:"Sum, product, min, max, any, all, plus any associative operation.",
+ strength:"Logarithmic depth. Efficient.",
+ limits:"Not every operation is associative. Floating-point is a classic non-associative case.",
+ pitfall:"Changing the reduction order changes floating-point results. Use compensated summation or fix the tree shape.",
+ question:"What is the span of a parallel tree reduction on n elements?",
+ answer:"O(log n) tree levels.",
+ demo:"reduce",sample:"1 2 3 4 5 6 7 8",refs:[
+  ["Blelloch, Prefix sums and their applications, CMU-CS-90-190, 1990","https://www.cs.cmu.edu/~guyb/papers/Ble93.pdf"],
+  ["Harris, Optimizing parallel reduction in CUDA, NVIDIA developer documentation","https://developer.download.nvidia.com/compute/cuda/1.1-Beta/x86_website/projects/reduction/doc/reduction.pdf"],
+  ["Higham, Accuracy and Stability of Numerical Algorithms, SIAM 2002","https://epubs.siam.org/doi/book/10.1137/1.9780898718027"]]},
+{id:"parallel-matmul",title:"Parallel matrix multiplication",level:4,kind:"Parallel numerical",status:"Runnable teaching lab",
+ summary:"Parallel matrix multiplication divides the output into tiles. Each processor computes one or more tiles by fetching the corresponding rows of A and columns of B.",
+ mental:"Every output tile gets its own worker",
+ mentalText:"Split C into blocks. Each worker computes one block from a row band of A and a column band of B. Independent tiles run in parallel.",
+ steps:["Partition A, B and C into tiles.","Assign tiles to workers.","Each worker computes its tile.","Distribute and combine the output."],
+ pseudo:"Naive parallel matmul (block algorithm):\n  partition A (m x k) and B (k x n) into blocks\n  partition C into a p x q grid of tiles\n  each worker owns tile C[i][j]\n  for each k-step:\n    fetch A[i][k] and B[k][j]\n    C[i][j] += A[i][k] * B[k][j]\n\nCost model:\n  compute per worker: O(n^3 / P) for P workers\n  communication: O(n^2 * p) for a p x p grid\n  ratio matters: compute / communication should be high\n\nCannon: shift A left, B up, multiply locally, repeat\nSUMMA: broadcast A column and B row, multiply, repeat\nBoth avoid the naive all-to-all communication.",
+ uses:"Scientific computing, deep learning, graphics, ML training.",
+ strength:"Embarrassingly parallel in output tiles. Blocked algorithms fit cache well.",
+ limits:"Communication dominates for small tiles or many nodes.",
+ pitfall:"Choosing tile size without regard to cache or network. Tile too small means too much communication.",
+ question:"Why are blocked algorithms preferred over the naive three-loop implementation?",
+ answer:"Blocking improves cache locality and enables communication-efficient distribution.",
+ demo:"parallel-matmul",sample:"4\n2",refs:[
+  ["Cannon, A cellular computer to implement the Kalman filter, PhD thesis, Montana State University 1969","https://scholarworks.montana.edu/xmlui/handle/1/1452"],
+  ["Van de Geijn and Watts, SUMMA: scalable universal matrix multiplication algorithm, Concurrency: Practice and Experience 1997","https://doi.org/10.1002/(SICI)1096-9128(199704)9:4<255::AID-CPE250>3.0.CO;2-2"],
+  ["Golub and Van Loan, Matrix Computations, 4th ed., Johns Hopkins 2013","https://jhupbooks.press.jhu.edu/title/matrix-computations"]]},
+{id:"domain-decomposition",title:"Domain decomposition",level:5,kind:"Parallel numerical",status:"Runnable teaching lab",
+ summary:"Domain decomposition splits a physical domain into overlapping or non-overlapping subdomains, solves each in parallel, and iterates at the interfaces.",
+ mental:"Cut the problem into pieces and stitch them together",
+ mentalText:"Each processor solves a local problem. Information passes across interfaces until the global solution is consistent.",
+ steps:["Partition the domain.","Solve local problems with boundary data from neighbours.","Exchange interface values.","Iterate until the interface converges."],
+ pseudo:"Overlapping Schwarz (additive):\n  for each subdomain i:\n    solve local problem with boundary from neighbours\n  combine with weights\n  iterate until convergence\n\nNon-overlapping (substructuring):\n  eliminate interior unknowns\n  solve for interface unknowns\n\nCoarse-grid correction is essential for scalability.\nWithout a coarse problem, iteration count grows with\nnumber of subdomains.\n\nCommon methods:\n  Schwarz methods\n  FETI, BDDC\n  Multigrid (see numerical lab)\n\nUsed for PDEs on large parallel machines.",
+ uses:"Parallel PDE solvers, structural analysis, CFD, weather simulation.",
+ strength:"Natural parallel decomposition. Scalable with proper coarse correction.",
+ limits:"Needs a coarse problem for scalability. Interface communication can dominate.",
+ pitfall:"Ignoring the coarse grid. Iteration count grows linearly with the number of subdomains.",
+ question:"Why is a coarse grid important in domain decomposition?",
+ answer:"It carries global information between distant subdomains. Without it, iteration count grows with the number of subdomains.",
+ demo:"domain-decomposition",sample:"16\n4\n5",refs:[
+  ["Smith, Bjorstad, Gropp, Domain Decomposition: Parallel Multilevel Methods for Elliptic PDEs, Cambridge 1996","https://www.cambridge.org/core/books/domain-decomposition/"],
+  ["Toselli and Widlund, Domain Decomposition Methods: Algorithms and Theory, Springer 2005","https://link.springer.com/book/10.1007/b137868"],
+  ["Dolean, Jolivet, Nataf, An Introduction to Domain Decomposition Methods, SIAM 2015","https://epubs.siam.org/doi/book/10.1137/1.9781611974065"]]},
+/* Ch 6 */
+{id:"mapreduce",title:"MapReduce",level:3,kind:"Distributed data",status:"Runnable teaching lab",
+ summary:"MapReduce processes large datasets by a map phase that emits key-value pairs, a shuffle that groups by key, and a reduce phase that combines values per key.",
+ mental:"Map, group by key, reduce",
+ mentalText:"The map emits (k, v) pairs. The shuffle groups all values for the same k. The reduce combines them.",
+ steps:["Split the input.","Map each split into (k, v) pairs.","Shuffle: group by key.","Reduce each key's value list.","Write the outputs."],
+ pseudo:"MapReduce job:\n  map(k1, v1) -> list(k2, v2)\n  shuffle: group by k2\n  reduce(k2, list(v2)) -> list(v3)\n\nExample (word count):\n  map(doc_id, text):\n    for word in text.split():\n      emit(word, 1)\n  reduce(word, counts):\n    emit(word, sum(counts))\n\nFault tolerance:\n  re-execute failed map tasks\n  reducers pull from completed maps\n\nCombiners:\n  local reduce before shuffle to reduce network traffic\n\nHadoop, Spark, and many other systems\nimplement this model.",
+ uses:"Batch data processing, log analysis, indexing, analytics.",
+ strength:"Simple model with automatic fault tolerance.",
+ limits:"Not ideal for iterative algorithms or low-latency queries.",
+ pitfall:"Skipping the combiner. Without it, the shuffle moves far more data.",
+ question:"What does a combiner do?",
+ answer:"It runs a partial reduce on the map output before shuffle, reducing network traffic.",
+ demo:"mapreduce",sample:"the quick brown fox jumps over the lazy dog\nthe dog barks and the fox runs",refs:[
+  ["Dean and Ghemawat, MapReduce: simplified data processing on large clusters, OSDI 2004","https://research.google/pubs/pub62/"],
+  ["White, Hadoop: The Definitive Guide, 4th ed., O'Reilly 2015","https://www.oreilly.com/library/view/hadoop-the-definitive/9781491901687/"],
+  ["Zaharia et al., Resilient Distributed Datasets, NSDI 2012","https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia"]]},
+{id:"spark-dataflow",title:"Dataflow and Spark execution",level:4,kind:"Distributed data",status:"Runnable teaching lab",
+ summary:"Dataflow systems build a DAG of transformations and evaluate it lazily. Spark's RDDs track lineage so that lost partitions can be recomputed.",
+ mental:"Build a graph of operations, execute it all at once",
+ mentalText:"Transformations are lazy. Only when an action is called does the system schedule the computation.",
+ steps:["Build a DAG of transformations.","An action triggers execution.","Split into stages at shuffle boundaries.","Schedule tasks across executors.","Recompute lost partitions from lineage."],
+ pseudo:"Spark execution model:\n  RDDs form a DAG\n  transformations (map, filter, join) build the DAG lazily\n  actions (count, collect, save) trigger a job\n\n  A job is split into stages at shuffle boundaries.\n  Each stage contains tasks that run in parallel.\n\n  Lineage:\n    each RDD knows how to rebuild its partitions\n    if a partition is lost, re-run its parent computations\n\n  Narrow vs wide dependencies:\n    narrow: each parent partition feeds one child\n      (map, filter) - can be pipelined\n    wide: many parents feed one child\n      (groupByKey, join) - requires shuffle",
+ uses:"Large-scale data processing, ETL, ML feature pipelines, graph analytics.",
+ strength:"Lazy evaluation enables optimization. Lineage gives fault tolerance without replication.",
+ limits:"Shuffles are expensive. Skewed keys can stall tasks.",
+ pitfall:"Using groupByKey when reduceByKey would suffice moves too much data over the network.",
+ question:"What is the difference between narrow and wide dependencies in Spark?",
+ answer:"Narrow dependencies allow pipelining. Wide dependencies require a shuffle and split stages.",
+ demo:"spark",sample:"1 the quick brown fox\n2 the lazy dog\n3 the fox and the dog",refs:[
+  ["Zaharia et al., Resilient Distributed Datasets, NSDI 2012","https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia"],
+  ["Armbrust et al., Spark SQL: relational data processing in Spark, SIGMOD 2015","https://doi.org/10.1145/2723372.2742797"],
+  ["Akidau et al., The Dataflow Model, VLDB 2015","https://doi.org/10.14778/2824032.2824076"]]},
+{id:"partitioning-shuffle",title:"Partitioning and shuffle",level:4,kind:"Distributed data",status:"Runnable teaching lab",
+ summary:"Shuffle redistributes data by key across workers. Partitioning decides which worker owns which key. Skewed keys create stragglers.",
+ mental:"Sorting mail into buckets by destination",
+ mentalText:"Every record is routed to a bucket based on its key. Each worker gets a set of buckets.",
+ steps:["Choose a partitioning function (hash, range, custom).","Each mapper sends records to the appropriate reducer.","Reducers merge incoming partitions.","Handle skew with salting or custom partitioners."],
+ pseudo:"Hash partitioning:\n  partition = hash(key) mod R\n\nRange partitioning:\n  partition by key ranges\n  each range owns a contiguous key interval\n  good for ordered queries, bad for skew\n\nRound-robin:\n  cycles through partitions\n  good for no-key workloads\n  bad for group-by semantics\n\nSkew handling:\n  salting: append a random suffix to hot keys\n  split hot keys across partitions\n  two-stage aggregation\n\nShuffle cost:\n  network I/O dominates\n  reduce data before shuffle (combiners)",
+ uses:"MapReduce, Spark, Flink, Kafka, distributed databases.",
+ strength:"Simple models with tunable granularity.",
+ limits:"Hot keys create stragglers. Range partitioning can create very uneven shards.",
+ pitfall:"Assuming uniform key distribution. Real data has skew.",
+ question:"What is data skew and why does it matter?",
+ answer:"Some keys have far more records than others. The worker owning a hot key becomes a straggler, slowing the whole job.",
+ demo:"shuffle",sample:"20\n4\nalpha,beta,gamma,delta,epsilon,hot,hot,hot,hot,hot,hot,hot,hot,hot,hot,hot,hot,hot,hot,hot",refs:[
+  ["Dean and Ghemawat, MapReduce, OSDI 2004","https://research.google/pubs/pub62/"],
+  ["Kwon et al., SkewTune: mitigating skew in MapReduce applications, SIGMOD 2012","https://doi.org/10.1145/2213836.2213840"],
+  ["Zaharia et al., Spark, NSDI 2012","https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/zaharia"]]},
+/* Ch 7 */
+{id:"lamport-vector",title:"Lamport and vector clocks",level:4,kind:"Distributed clocks",status:"Runnable teaching lab",
+ summary:"Lamport clocks give a total order consistent with causality. Vector clocks give the partial order itself: you can tell whether two events are causally related or concurrent.",
+ mental:"Numbering events, or tracking who knows what",
+ mentalText:"Lamport: increment a counter on each event and on send/receive. Vector: keep a counter per process.",
+ steps:["Lamport: for a local event, c += 1. On send, c += 1 and include c. On receive, c = max(local, received) + 1.","Vector: each process has a vector of counters. On send, increment own entry. On receive, take elementwise max and increment own entry."],
+ pseudo:"Lamport clock:\n  local event: c += 1\n  send: c += 1, send(c)\n  receive(m): c = max(c, m.c) + 1\n\n  If a -> b, then L(a) < L(b).\n  Converse is not true: L(a) < L(b) does not imply a -> b.\n\nVector clock (one counter per process):\n  local event: V[i] += 1\n  send: V[i] += 1, send(V)\n  receive(m): for each k: V[k] = max(V[k], m.V[k]); V[i] += 1\n\n  V(a) < V(b) iff a -> b\n  V(a) || V(b) iff concurrent\n\nApplications:\n  causal ordering, distributed debugging, conflict detection",
+ uses:"Distributed debugging, causal delivery, conflict detection in eventual consistency.",
+ strength:"Vector clocks capture the full causal partial order.",
+ limits:"Vector clocks grow linearly with the number of processes.",
+ pitfall:"Lamport clocks give a total order that is consistent with causality but does not detect concurrency. Use vector clocks for that.",
+ question:"What is the key difference between Lamport and vector clocks?",
+ answer:"Lamport clocks only give a total order. Vector clocks detect concurrency: two events with incomparable vectors are concurrent.",
+ demo:"vector-clock",sample:"3\nA sends B\nB sends C\nC sends A\nA sends C",refs:[
+  ["Lamport, Time, clocks, and the ordering of events in a distributed system, CACM 1978","https://doi.org/10.1145/359545.359563"],
+  ["Mattern, Virtual time and global states of distributed systems, 1989","https://doi.org/10.1016/B978-0-444-88074-1.50017-9"],
+  ["Fidge, Timestamps in message-passing systems that preserve the partial ordering, 1988","https://doi.org/10.1080/00049158808903093"]]},
+{id:"hlc",title:"Hybrid logical clocks",level:5,kind:"Distributed clocks",status:"Runnable teaching lab",
+ summary:"Hybrid logical clocks (HLC) combine physical time with a logical counter. They provide a total order close to wall clock time and remain monotonic even when clocks drift.",
+ mental:"Physical time with a logical correction",
+ mentalText:"Each timestamp is a pair (physical_time, logical_counter). The counter breaks ties and handles clock skew.",
+ steps:["On a local event, set l' = max(l, physical_now). If l' == l, increment c; else reset c = 0.","On send, include (l, c). On receive, take the max of the local and remote physical times, then adjust the counter."],
+ pseudo:"HLC timestamp: (l, c)\n  l: physical time component (milliseconds)\n  c: logical counter\n\nSend or local event:\n  l' = max(l, pt)\n  if l' == l: c += 1\n  else: c = 0\n  l = l'\n\nReceive (l_m, c_m):\n  l' = max(l, l_m, pt)\n  if l' == l == l_m: c = max(c, c_m) + 1\n  elif l' == l: c += 1\n  elif l' == l_m: c = c_m + 1\n  else: c = 0\n  l = l'\n\nProperties:\n  monotonic even when physical clocks go backwards\n  close to physical time (bounded by clock skew)\n  total order via (l, c)\n\nUsed in:\n  CockroachDB, MongoDB, Yugabyte",
+ uses:"Distributed databases with a single logical timeline anchored to physical time.",
+ strength:"Monotonic and close to wall clock. Handles clock drift.",
+ limits:"Still relies on bounded clock skew for the physical component.",
+ pitfall:"Assuming HLC timestamps reflect real time exactly. They can drift from physical time when clocks are skewed.",
+ question:"How does HLC differ from a Lamport clock?",
+ answer:"HLC carries a physical time component that stays close to wall clock, while a Lamport clock only counts events.",
+ demo:"hlc",sample:"1000\n950\n3",refs:[
+  ["Kulkarni, Demirbas, Madappa, Avva, Leone, Logical physical clocks, OPODIS 2014","https://doi.org/10.1007/978-3-319-14472-6_2"],
+  ["CockroachDB documentation, Hybrid Logical Clock","https://www.cockroachlabs.com/docs/stable/architecture/transaction-layer"],
+  ["MongoDB documentation, Hybrid Logical Clock","https://www.mongodb.com/docs/manual/core/replica-set-high-availability/"]]},
+{id:"chandy-lamport",title:"Chandy-Lamport snapshots",level:5,kind:"Snapshots",status:"Runnable teaching lab",
+ summary:"The Chandy-Lamport algorithm takes a consistent global snapshot of a distributed system without stopping processes. Markers flow through the channels to separate pre-snapshot from post-snapshot messages.",
+ mental:"A distributed photograph taken without freezing time",
+ mentalText:"A process records its state and sends a marker on each outgoing channel. Messages received before the marker are included; after, they are not.",
+ steps:["Any process starts by recording its state and sending markers.","A process receiving its first marker records its state and forwards markers.","A process records the state of each incoming channel until the marker arrives on it.","When all markers arrive, the snapshot is complete."],
+ pseudo:"Chandy-Lamport:\n  Initiator:\n    record local state\n    for each outgoing channel C:\n      send marker on C\n\n  On receiving marker on channel C for the first time:\n    if state not recorded:\n      record local state\n      send marker on all outgoing channels\n    start recording messages from C\n\n  On receiving marker on channel C after state recorded:\n    stop recording; recorded messages are C's channel state\n\nResult: a consistent cut.\n  every message received in the snapshot was sent in the snapshot.\n\nTermination: distributed termination detection.",
+ uses:"Distributed debugging, checkpointing, global state detection.",
+ strength:"Consistent snapshot without stopping the system.",
+ limits:"Channel state can be large. Not directly a distributed checkpoint for restart.",
+ pitfall:"Forgetting to record messages in-flight. They become part of the channel state.",
+ question:"Why does Chandy-Lamport produce a consistent snapshot?",
+ answer:"Markers separate messages into pre- and post-snapshot. Each process records messages on an incoming channel only until the marker arrives.",
+ demo:"chandy-lamport",sample:"3\n4",refs:[
+  ["Chandy and Lamport, Distributed snapshots: determining global states of distributed systems, ACM TOCS 1985","https://doi.org/10.1145/214451.214456"],
+  ["Mattern, Efficient algorithms for distributed snapshots and global virtual time approximation, JPDC 1993","https://doi.org/10.1006/jpdc.1993.1075"],
+  ["Lynch, Distributed Algorithms, Morgan Kaufmann 1996","https://www.sciencedirect.com/book/9781558603486/distributed-algorithms"]]},
+/* Ch 8 */
+{id:"paxos",title:"Paxos",level:5,kind:"Consensus",status:"Runnable teaching lab",
+ summary:"Paxos reaches agreement on a single value in an asynchronous system with crash faults. A proposer needs a majority of acceptors to promise, then a majority to accept.",
+ mental:"Two rounds of majority voting",
+ mentalText:"Prepare: ask acceptors to promise not to accept lower-numbered proposals. Accept: send the value; acceptors accept if their promise holds.",
+ steps:["Proposer picks a unique proposal number n.","Prepare: send to acceptors.","Acceptors promise to ignore lower proposals and return any accepted value.","Proposer picks the highest-numbered accepted value (or its own) and sends Accept.","Acceptors accept if n is higher than any previously accepted proposal.","Consensus when a majority has accepted."],
+ pseudo:"Prepare phase:\n  Proposer -> all: Prepare(n)\n  Acceptor:\n    if n > promised:\n      promised = n\n      reply Promise(n, accepted_value, accepted_num)\n    else:\n      reply NACK\n\nAccept phase:\n  Proposer -> all: Accept(n, v)\n    v = highest accepted value from any promise, or proposer's value\n  Acceptor:\n    if n >= promised:\n      promised = n\n      accepted_value = v\n      accepted_num = n\n      reply Accepted(n, v)\n\nSafety: two majorities intersect, so at least one acceptor\nhas seen any previously chosen value.\n\nLiveness: requires a leader. Without a stable leader,\nproposers can livelock.\n\nPaxos is single-value. Multi-Paxos extends it to a log.",
+ uses:"Distributed databases, coordination services (Chubby, Spanner, ZooKeeper has ZAB).",
+ strength:"Proven safe under crash faults in asynchronous systems.",
+ limits:"Hard to understand and implement. Livelock without a leader.",
+ pitfall:"Not using a stable leader. Multiple proposers can keep each other from making progress.",
+ question:"Why does Paxos need two phases?",
+ answer:"Prepare learns any previously accepted value. Accept commits the value with a majority. Two phases make the protocol safe under asynchrony.",
+ demo:"paxos",sample:"5\nA",refs:[
+  ["Lamport, The part-time parliament, ACM TOCS 1998","https://doi.org/10.1145/279227.279229"],
+  ["Lamport, Paxos made simple, ACM SIGACT News 2001","https://lamport.azurewebsites.net/pubs/paxos-simple.pdf"],
+  ["Chandra, Griesemer, Redstone, Paxos made live, PODC 2007","https://doi.org/10.1145/1281100.1281103"]]},
+{id:"raft",title:"Raft",level:4,kind:"Consensus",status:"Runnable teaching lab",
+ summary:"Raft is a consensus algorithm designed for understandability. It elects a leader, replicates a log, and applies committed entries to a state machine.",
+ mental:"A leader with followers",
+ mentalText:"One leader receives client requests, appends to its log, and replicates to followers. Once a majority has the entry, it is committed.",
+ steps:["Followers wait for a heartbeat from the leader.","If no heartbeat within timeout, a candidate starts an election.","The candidate requests votes. Majority vote makes it leader.","Leader receives client requests, appends to log, replicates.","Once a majority acknowledges, the entry is committed."],
+ pseudo:"States: Follower, Candidate, Leader\n\nLeader election:\n  Follower times out -> Candidate\n  Candidate increments term, votes for itself, requests votes\n  Majority of votes -> Leader\n  Higher term seen -> become Follower\n\nLog replication:\n  Leader appends entry to its log\n  Sends AppendEntries to followers\n  Followers append and ack\n  Leader commits when majority has the entry\n  Committed entries are applied to the state machine\n\nSafety properties:\n  Election Safety: at most one leader per term\n  Leader Append-Only: leader never overwrites its log\n  Log Matching: if two logs contain an entry with same index and term, all prior entries match\n  Leader Completeness: a leader has all committed entries\n  State Machine Safety: no two state machines apply different entries at the same index",
+ uses:"etcd, Consul, TiKV, CockroachDB, many distributed systems.",
+ strength:"Easier to understand and implement than Paxos.",
+ limits:"Leader is a bottleneck. Leader election causes brief unavailability.",
+ pitfall:"Raft is not partition tolerant in the CAP sense: the minority side cannot make progress.",
+ question:"What does the Log Matching property guarantee?",
+ answer:"If two logs contain an entry with the same index and term, all prior entries are identical.",
+ demo:"raft",sample:"5\n20",refs:[
+  ["Ongaro and Ousterhout, In search of an understandable consensus algorithm, USENIX ATC 2014","https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro"],
+  ["Raft website","https://raft.github.io/"],
+  ["Ongaro, Consensus: bridging theory and practice, PhD thesis, Stanford 2014","https://web.stanford.edu/~ouster/cgi-bin/papers/OngaroPhD.pdf"]]},
+{id:"vr-zab",title:"Viewstamped Replication and Zab",level:5,kind:"Consensus",status:"Runnable teaching lab",
+ summary:"Viewstamped Replication is a primary-backup protocol that predates Paxos. Zab is the ZooKeeper Atomic Broadcast protocol; it provides a total order of updates.",
+ mental:"A primary that orders and broadcasts updates",
+ mentalText:"A primary orders client requests and broadcasts them. A majority accepts, then the primary commits and tells everyone.",
+ steps:["Elect a primary.","Primary orders requests and broadcasts proposals.","Replicas accept and acknowledge.","Primary commits when a majority has accepted.","Replicas apply and reply."],
+ pseudo:"Viewstamped Replication:\n  View: the primary's term\n  Prepare: elected primary picks a view, gathers state\n  Commit: after a majority accepts, entries are committed\n  ZAB is the atomic broadcast used by ZooKeeper\n\nZab:\n  Phase 1 (election): choose a leader\n  Phase 2 (discovery): synchronize state\n  Phase 3 (broadcast): broadcast updates\n  Each update is assigned a zxid\n\nDifference from Paxos:\n  Zab is for ordered broadcast, not just single-value consensus\n  Simpler for state-machine replication\n  Uses primary-backup, not symmetric proposers",
+ uses:"ZooKeeper, systems that need a total order of updates.",
+ strength:"Simpler than Paxos for state-machine replication.",
+ limits:"Primary is a bottleneck. Leader election is required.",
+ pitfall:"Zab and Paxos are often described as the same. They are not: Zab guarantees a prefix of the update order, not just agreement on a value.",
+ question:"What is the main difference between Zab and Paxos?",
+ answer:"Zab provides a total order over updates (atomic broadcast). Paxos solves single-value consensus and must be extended for logs.",
+ demo:"replication",sample:"5\n3",refs:[
+  ["Oki and Liskov, Viewstamped replication: a new primary copy method to support highly-available distributed systems, PODC 1988","https://doi.org/10.1145/277697.277716"],
+  ["Junqueira, Reed, Serafini, Zab: high-performance broadcast for primary-backup systems, DSN 2011","https://doi.org/10.1109/DSN.2011.5958223"],
+  ["Hunt, Konar, Junqueira, Reed, ZooKeeper: wait-free coordination for internet-scale systems, USENIX ATC 2010","https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf"]]},
+{id:"chain-replication",title:"Chain replication",level:4,kind:"Replication",status:"Concept lesson",
+ summary:"Chain replication arranges replicas in a chain. The head receives writes, forwards down the chain, and the tail sends acknowledgements back. Reads are served by the tail.",
+ mental:"A bucket brigade",
+ mentalText:"Writes enter at the head and pass down the chain. The tail is always up to date, so reads come from the tail.",
+ steps:["A write arrives at the head.","The head applies it, forwards to the next node.","Each node applies and forwards.","The tail applies and sends an acknowledgement back up the chain.","Reads are served by the tail, which has all committed writes."],
+ pseudo:"Chain: Head -> Node 2 -> ... -> Tail\n\nWrite path:\n  client -> head\n  head -> node2 -> ... -> tail\n  tail ack -> back to head -> client\n\nRead path:\n  client -> tail\n  tail responds with current value\n\nStrengths:\n  simple to reason about\n  strong consistency (linearizable writes, sequential reads)\n  load spread across the chain for writes\n\nWeaknesses:\n  read throughput limited by the tail\n  tail failure requires reconfiguring the chain\n  latency proportional to chain length for writes",
+ uses:"CRAQ (Chain Replication with Apportioned Queries), object stores, some distributed key-value stores.",
+ strength:"Simple correctness argument. High write throughput with parallelism.",
+ limits:"Read throughput bottleneck. Chain reconfiguration on failure.",
+ pitfall:"Assuming head is a bottleneck. In chain replication, writes are spread across all nodes. Reads all hit the tail.",
+ question:"Where are reads served in chain replication?",
+ answer:"From the tail. The tail has all committed writes, so it can serve reads with strong consistency.",
+ demo:"chain",sample:"4\n5",refs:[
+  ["van Renesse and Schneider, Chain replication for supporting high throughput and availability, OSDI 2004","https://www.usenix.org/legacy/events/osdi04/tech/full_papers/renesse/renesse.pdf"],
+  ["Terrace and Freedman, Object storage on CRAQ: high-throughput chain replication for read-mostly workloads, USENIX ATC 2009","https://www.usenix.org/legacy/event/atc09/tech/full_papers/terrace.pdf"],
+  ["Lynch, Distributed Algorithms, Chapter 14","https://www.sciencedirect.com/book/9781558603486/distributed-algorithms"]]},
+/* Ch 9 */
+{id:"two-three-phase-commit",title:"Two-phase and three-phase commit",level:4,kind:"Transactions",status:"Runnable teaching lab",
+ summary:"Two-phase commit (2PC) coordinates a transaction across multiple participants. Three-phase commit (3PC) adds a pre-commit phase to reduce blocking under failures.",
+ mental:"Vote then commit",
+ mentalText:"Phase 1: every participant votes yes or no. Phase 2: the coordinator commits if everyone voted yes, otherwise aborts.",
+ steps:["Coordinator sends prepare to participants.","Each participant locks and votes yes or no.","Coordinator collects votes.","If all yes: send commit. Else: send abort.","Participants apply and release locks."],
+ pseudo:"2PC:\n  Phase 1 (prepare):\n    Coordinator -> participants: prepare\n    Participant: lock, log, vote yes or no\n\n  Phase 2 (commit):\n    if all yes:\n      Coordinator -> all: commit\n      Participant: apply, ack\n    else:\n      Coordinator -> all: abort\n      Participant: rollback, ack\n\nBlocking problem:\n  if coordinator fails after prepare but before commit,\n  participants hold locks and cannot decide.\n  They block until coordinator recovers.\n\n3PC:\n  add a pre-commit phase between prepare and commit\n  allows participants to time out and decide\n  but requires a failure detector\n  and does not solve network partitions",
+ uses:"Distributed databases, distributed transactions, XA.",
+ strength:"Simple. Works well when failures are rare.",
+ limits:"Blocking on coordinator failure. No partition tolerance.",
+ pitfall:"2PC is a blocking protocol. Under failures, participants can hang.",
+ question:"Why does 2PC block under coordinator failure?",
+ answer:"After voting yes, participants have locked resources but do not know whether to commit or abort. They must wait for the coordinator.",
+ demo:"2pc",sample:"3\n2",refs:[
+  ["Gray, Notes on data base operating systems, in Operating Systems, Springer 1978","https://link.springer.com/chapter/10.1007/3-540-08755-9_9"],
+  ["Bernstein, Hadzilacos, Goodman, Concurrency Control and Recovery in Database Systems, Addison-Wesley 1987","https://www.microsoft.com/en-us/research/people/philbe/book/"],
+  ["Lampson and Lomet, A new presumed commit optimization for two phase commit, VLDB 1993","https://www.vldb.org/conf/1993/P630.PDF"]]},
+{id:"swim-phi",title:"SWIM and phi-accrual failure detection",level:4,kind:"Failure detection",status:"Runnable teaching lab",
+ summary:"SWIM detects failures with a gossip-based protocol and suspicion. Phi-accrual replaces the binary alive/dead decision with a continuous suspicion level based on arrival-time statistics.",
+ mental:"Gossip about who is alive, and how suspicious we are",
+ mentalText:"SWIM: ping, indirect ping, and gossip to spread membership. Phi-accrual: compute a suspicion value from the distribution of ping inter-arrival times.",
+ steps:["SWIM: periodically ping a random member.","If no response, ask k others to ping it indirectly.","If still nothing, mark as suspect and gossip.","Phi-accrual: track heartbeat arrival times, compute phi = -log10(1 - F(time_since_last))."],
+ pseudo:"SWIM:\n  every T: pick a random member, ping\n  if no ack within timeout:\n    pick k others, ask them to ping\n    if still no ack: mark suspect\n  gossip the suspicion to random members\n\n  Suspicion can be refuted by a direct message.\n  Handles false positives and message loss.\n\nPhi-accrual:\n  maintain samples of inter-arrival times\n  mean mu, variance sigma^2\n  t = time since last heartbeat\n  F(t) = estimated CDF\n  phi = -log10(1 - F(t))\n\n  threshold phi > 8 to declare dead\n  adapts to network conditions",
+ uses:"Cluster membership (Cassandra, Akka, HashiCorp Serf).",
+ strength:"Handles false positives and network jitter gracefully.",
+ limits:"Phi parameter must be tuned. Slow detection at low threshold, false positives at high.",
+ pitfall:"Treating a suspect as dead. In SWIM, suspicion can be refuted.",
+ question:"What is the key idea behind phi-accrual?",
+ answer:"It gives a continuous suspicion value based on the distribution of heartbeat arrival times, rather than a binary decision.",
+ demo:"swim",sample:"5\n20",refs:[
+  ["Das, Gupta, Motivala, SWIM: scalable weakly-consistent infection-style process group membership protocol, DSN 2002","https://doi.org/10.1109/DSN.2002.1028914"],
+  ["Hayashibara, Defago, Yared, Katayama, The phi accrual failure detector, SRDS 2004","https://doi.org/10.1109/RELDIS.2004.1353004"],
+  ["Cassandra documentation, Failure detection","https://cassandra.apache.org/doc/latest/architecture/storage_engine/"]]},
+{id:"anti-entropy",title:"Anti-entropy and Merkle trees",level:4,kind:"Replication",status:"Runnable teaching lab",
+ summary:"Anti-entropy repairs divergence between replicas. Merkle trees let two replicas compare many keys with a small amount of communication.",
+ mental:"Find the differing keys cheaply",
+ mentalText:"Hash keys into a tree. Compare roots; if different, descend only into the differing subtrees.",
+ steps:["Each replica builds a Merkle tree over its key-value pairs.","Two replicas exchange roots.","If roots differ, descend level by level.","Exchange only the differing leaves."],
+ pseudo:"Merkle tree:\n  leaf = hash(key || value)\n  internal = hash(left || right)\n  root = hash of all\n\nRepair:\n  compare roots\n  if equal: no repair needed\n  else: descend into differing subtrees\n  exchange the actual entries for differing leaves\n\nUsed in:\n  Cassandra, Dynamo, Riak\n  Bitcoin, IPFS, Git\n  Certificate Transparency\n\nTrade-off:\n  O(log n) rounds to find differences\n  O(d log n) comparisons for d differences\n  O(n) space for the tree",
+ uses:"Replica repair in eventually consistent stores, content-addressed storage, distributed ledgers.",
+ strength:"Efficiently identifies differing keys between replicas.",
+ limits:"Rebuild cost if the tree is not maintained incrementally.",
+ pitfall:"Assuming anti-entropy is instantaneous. Repair takes time and may conflict with live writes.",
+ question:"Why are Merkle trees used in anti-entropy?",
+ answer:"They let two replicas compare their data efficiently. Only the differing subtrees need to be exchanged.",
+ demo:"merkle",sample:"8",refs:[
+  ["DeCandia et al., Dynamo: Amazon's highly available key-value store, SOSP 2007","https://doi.org/10.1145/1294261.1294281"],
+  ["Merkle, A certified digital signature, CRYPTO 1989","https://link.springer.com/chapter/10.1007/0-387-34805-0_21"],
+  ["Cassandra documentation, Anti-entropy repair","https://cassandra.apache.org/doc/latest/operating/repair.html"]]},
+/* Ch 10 */
+{id:"pbft",title:"Practical Byzantine Fault Tolerance",level:5,kind:"Byzantine",status:"Runnable teaching lab",
+ summary:"PBFT tolerates up to f Byzantine faults with 3f+1 replicas. It uses a primary, a three-phase protocol (pre-prepare, prepare, commit), and view changes.",
+ mental:"Majorities that can tolerate liars",
+ mentalText:"With 3f+1 replicas, more than 2f honest ones always intersect. A liar cannot corrupt a majority.",
+ steps:["Client sends request to the primary.","Primary assigns a sequence number and broadcasts pre-prepare.","Replicas broadcast prepare.","On 2f prepares, broadcast commit.","On 2f+1 commits, execute and reply.","Client waits for f+1 matching replies."],
+ pseudo:"PBFT (3f+1 replicas, up to f Byzantine):\n  Request: client -> primary\n  Pre-prepare: primary -> all (with view, seq, digest)\n  Prepare: each replica -> all (verify, broadcast prepare)\n  Commit: on 2f prepares, broadcast commit\n  Reply: on 2f+1 commits, execute and reply to client\n  Client: waits for f+1 matching replies\n\nView change:\n  if primary suspected faulty: replicas start view change\n  new primary chosen by view number\n\nComplexity:\n  O(n^2) messages per request\n  view change is expensive\n\nPBFT requires:\n  partial synchrony\n  authenticated messages\n  a known set of replicas",
+ uses:"Permissioned blockchains, distributed databases needing BFT, some aerospace systems.",
+ strength:"Tolerates Byzantine faults, not just crashes.",
+ limits:"O(n^2) messages, expensive view changes, needs a known replica set.",
+ pitfall:"PBFT is not suitable for open, permissionless networks. Replica set is fixed and authenticated.",
+ question:"Why does PBFT need 3f+1 replicas?",
+ answer:"With 2f+1 you can tolerate f crash faults. For Byzantine faults, you need an extra f to ensure that honest nodes can reach agreement despite liars.",
+ demo:"bft-quorum",sample:"7\n2",refs:[
+  ["Castro and Liskov, Practical Byzantine fault tolerance, OSDI 1999","https://www.usenix.org/legacy/events/osdi99/full_papers/castro/castro.pdf"],
+  ["Castro and Liskov, Practical Byzantine fault tolerance and proactive recovery, ACM TOCS 2002","https://doi.org/10.1145/571637.571640"],
+  ["Lamport, Shostak, Pease, The Byzantine generals problem, ACM TOPLAS 1982","https://doi.org/10.1145/357172.357176"]]},
+{id:"hotstuff",title:"HotStuff",level:5,kind:"Byzantine",status:"Runnable teaching lab",
+ summary:"HotStuff is a Byzantine consensus protocol with linear message complexity per view. It uses threshold signatures and a simple leader-based pipeline.",
+ mental:"Linear cost per view",
+ mentalText:"Each view has a leader. Replicas send votes to the leader, which combines them into a quorum certificate. The next leader uses the certificate to justify its proposal.",
+ steps:["Leader proposes a new block with a quorum certificate for its parent.","Replicas vote on the proposal.","Leader collects votes and forms a quorum certificate.","Votes and QCs are chained into a pipeline.","Commit when three chained QCs are in place."],
+ pseudo:"HotStuff view:\n  Leader: propose block B with QC for parent\n  Replicas: verify, vote on B\n  Leader: aggregate votes into QC for B\n  Next leader: uses QC as parent link\n\nSafety:\n  any two quorum certificates intersect in > 2/3 of replicas\n  byzantine replicas < 1/3\n\nCommit rule:\n  after three chained QCs, the block is committed\n\nComplexity:\n  O(n) messages per view\n  pipelined views give high throughput\n\nUsed in:\n  DiemBFT, Facebook's Libra/Diem\n  many modern BFT protocols",
+ uses:"Permissioned blockchains, BFT databases, and any system needing Byzantine consensus with high throughput.",
+ strength:"Linear message complexity per view. Pipelining.",
+ limits:"Requires threshold signatures or aggregatable signatures.",
+ pitfall:"Assuming O(n) is always faster. Signature aggregation has its own cost.",
+ question:"What is the key advantage of HotStuff over PBFT?",
+ answer:"Linear message complexity per view (O(n)) instead of quadratic (O(n^2)), making it scale better to larger replica sets.",
+ demo:"bft-quorum",sample:"7\n2",refs:[
+  ["Yin, Malkhi, Reiter, Gueta, Abraham, HotStuff: BFT consensus with linearity and responsiveness, PODC 2019","https://doi.org/10.1145/3293611.3331591"],
+  ["Baudet, Danezis, Sonnino, FastPay: high-performance Byzantine fault-tolerant settlement, 2020","https://arxiv.org/abs/2003.11506"],
+  ["DiemBFT v4 documentation","https://developers.diem.com/papers/diem-consensus-state-machine-replication-in-the-diem-blockchain/2021-08-17.pdf"]]},
+{id:"quorum-faults",title:"Quorum certificates and fault models",level:5,kind:"Byzantine",status:"Runnable teaching lab",
+ summary:"A quorum certificate is a signed proof that a supermajority of replicas voted for a value. Fault models describe what can go wrong: crash, omission, timing, Byzantine.",
+ mental:"Proof of majority approval",
+ mentalText:"The certificate is portable. Any replica can present it as evidence that the vote passed.",
+ steps:["Choose a fault model.","Choose a quorum threshold.","Replicas sign their votes.","Collect signatures into a certificate.","Verify the certificate to check agreement."],
+ pseudo:"Fault models:\n  crash: process stops, no more messages\n  omission: process may drop messages\n  timing: bounds on message delay\n  Byzantine: process may behave arbitrarily\n\nQuorum thresholds:\n  crash fault tolerance: majority (> n/2)\n  Byzantine fault tolerance: > 2n/3\n  Flexible quorums: split read/write quorums\n\nQuorum certificates:\n  aggregate signatures over a value\n  prove a threshold of replicas voted\n  used to justify subsequent proposals\n\nThreshold signatures (BLS):\n  one signature represents a threshold\n  constant size regardless of n",
+ uses:"BFT protocols, blockchain finality, distributed certificates.",
+ strength:"Compact proof of agreement. Enables pipelined protocols.",
+ limits:"Signature aggregation cost. Quorum thresholds must be chosen based on the fault model.",
+ pitfall:"Using majority thresholds in a Byzantine setting. A majority of 51% is not enough for BFT.",
+ question:"What quorum threshold is needed for Byzantine fault tolerance?",
+ answer:"More than 2n/3 of replicas. This ensures that any two quorums intersect in at least one honest replica.",
+ demo:"bft-quorum",sample:"7\n2",refs:[
+  ["Malkhi and Reiter, Byzantine quorum systems, Distributed Computing 1998","https://doi.org/10.1007/s004460050046"],
+  ["Lamport, Shostak, Pease, The Byzantine generals problem, ACM TOPLAS 1982","https://doi.org/10.1145/357172.357176"],
+  ["Buterin and Griffith, Casper the Friendly Finality Gadget, 2017","https://arxiv.org/abs/1710.09437"]]},
+/* Ch 11 */
+{id:"consistent-hashing",title:"Consistent hashing",level:3,kind:"Naming",status:"Runnable teaching lab",
+ summary:"Consistent hashing maps keys and nodes onto a ring. Adding or removing a node only moves keys that belong to the adjacent arc. This minimizes rehashing.",
+ mental:"A ring where both keys and servers have positions",
+ mentalText:"Hash each server and each key to a point on the ring. A key belongs to the next server clockwise. Adding a server only moves its own keys.",
+ steps:["Hash servers and keys to a ring.","Each key maps to the next server clockwise.","Add virtual nodes to smooth distribution.","Adding a server only reassigns its arc."],
+ pseudo:"Consistent hashing:\n  hash server_i -> point on ring\n  hash key -> point on ring\n  key belongs to first server clockwise\n\nVirtual nodes:\n  each physical server gets multiple points\n  smooths load imbalance\n  typical: 100 to 1000 virtual nodes per server\n\nWhen adding a server:\n  only keys in the new server's arcs move\n  expected fraction moved = 1/(n+1)\n\nWhen removing a server:\n  its keys move to the next server\n\nUsed in:\n  Cassandra, Dynamo, Riak\n  memcached clients\n  CDNs, load balancers",
+ uses:"Distributed caches, key-value stores, load balancers.",
+ strength:"Minimal data movement when the cluster changes.",
+ limits:"Skewed distribution without virtual nodes. Hot keys still hot.",
+ pitfall:"Using too few virtual nodes causes uneven load.",
+ question:"What fraction of keys move when you add a node?",
+ answer:"About 1/(n+1), where n is the previous number of nodes.",
+ demo:"consistent-hashing",sample:"16\n1000\n4",refs:[
+  ["Karger et al., Consistent hashing and random trees, STOC 1997","https://doi.org/10.1145/258533.258660"],
+  ["DeCandia et al., Dynamo: Amazon's highly available key-value store, SOSP 2007","https://doi.org/10.1145/1294261.1294281"],
+  ["Weisstein, Hash ring implementation notes","https://en.wikipedia.org/wiki/Consistent_hashing"]]},
+{id:"chord",title:"Chord DHT",level:4,kind:"Naming",status:"Runnable teaching lab",
+ summary:"Chord is a distributed hash table that maps keys to nodes on a ring. Each node has a finger table that lets it route to any key in O(log n) hops.",
+ mental:"A ring with shortcuts",
+ mentalText:"Each node knows the next node on the ring. Finger tables add shortcuts at exponentially increasing distances.",
+ steps:["Hash keys and nodes to an m-bit ring.","Each node stores a successor and a finger table.","Route: if key is between me and my successor, deliver. Else, forward to the closest finger that precedes the key.","Repeat until the key is at its owner."],
+ pseudo:"Chord ring:\n  identifier space [0, 2^m)\n  each node has successor and predecessor\n  finger[i] = successor(n + 2^(i-1)) for i = 1..m\n\nLookup(key):\n  if key is in (self, successor]: deliver to successor\n  else: forward to the closest finger before key\n\nHops: O(log n)\n\nStabilization:\n  new nodes join: find successor via lookup\n  periodic stabilization fixes pointers\n\nUsed in:\n  early DHT research\n  OpenDHT\n  some P2P systems",
+ uses:"Distributed hash tables, peer-to-peer lookup.",
+ strength:"O(log n) lookups with O(log n) state per node.",
+ limits:"No mechanism for data replication or consistency by itself.",
+ pitfall:"Assuming Chord handles replication. It only handles routing.",
+ question:"How many hops does a Chord lookup take?",
+ answer:"O(log n), where n is the number of nodes.",
+ demo:"chord",sample:"32\n8\n5\n4",refs:[
+  ["Stoica, Morris, Karger, Kaashoek, Balakrishnan, Chord: a scalable peer-to-peer lookup service for internet applications, SIGCOMM 2001","https://doi.org/10.1145/383059.383071"],
+  ["Karger et al., Consistent hashing and random trees, STOC 1997","https://doi.org/10.1145/258533.258660"],
+  ["Rhea, Geels, Roscoe, Kubiatowicz, Handling churn in a DHT, USENIX ATC 2004","https://www.usenix.org/legacy/events/atc04/tech/full_papers/rhea/rhea.pdf"]]},
+{id:"kademlia",title:"Kademlia",level:4,kind:"Naming",status:"Runnable teaching lab",
+ summary:"Kademlia is a DHT that uses XOR distance and k-buckets. Lookups converge in O(log n) hops with symmetric routing, and provide natural caching.",
+ mental:"XOR distance and buckets of peers",
+ mentalText:"Distance between two nodes is the XOR of their IDs. Each node keeps a bucket of peers at each distance range.",
+ steps:["Each node has an m-bit ID.","Distance between IDs = XOR.","Each node keeps k peers per distance bucket.","Lookup: query a peers in the closest bucket, then iterate.","The lookup converges to the closest node."],
+ pseudo:"Kademlia:\n  distance(a, b) = a XOR b\n\n  k-buckets:\n    bucket i covers distance [2^i, 2^(i+1))\n    holds up to k peers\n    least recently seen eviction\n\nLookup(key):\n  start with alpha closest peers from local table\n  query them for peers closer to the target\n  repeat until no closer peers found\n\nHops: O(log n)\nBucket size: k, typically 20\n\nUsed in:\n  BitTorrent DHT (mainline DHT)\n  Ethereum\n  IPFS",
+ uses:"Peer-to-peer networks, decentralized file sharing, blockchain networks.",
+ strength:"Symmetric distance, natural caching, resistance to certain attacks.",
+ limits:"K-buckets need refresh. Sybil attacks possible without extra defenses.",
+ pitfall:"Using the wrong metric. Kademlia distance is XOR, not numeric distance.",
+ question:"What is the XOR distance between 1010 and 0110?",
+ answer:"1100 in binary (12 in decimal).",
+ demo:"kademlia",sample:"32\n8\n20\n5",refs:[
+  ["Maymounkov and Mazieres, Kademlia: a peer-to-peer information system based on the XOR metric, IPTPS 2002","https://doi.org/10.1007/3-540-45748-8_5"],
+  ["BitTorrent DHT protocol documentation","https://www.bittorrent.org/beps/bep_0005.html"],
+  ["Baumgart and Mies, S/Kademlia: a practicable approach towards secure key-based routing, ICPADS 2007","https://doi.org/10.1109/ICPADS.2007.4447808"]]},
+{id:"leader-election",title:"Leader election: bully and Chang-Roberts",level:4,kind:"Coordination",status:"Runnable teaching lab",
+ summary:"Leader election picks one process to coordinate. Bully uses IDs and highest wins. Chang-Roberts uses a ring and message passing.",
+ mental:"Electing a leader by highest ID",
+ mentalText:"Bully: any process can start an election by sending to higher IDs. If none respond, it becomes leader. Chang-Roberts: messages pass around a ring, the highest ID wins.",
+ steps:["Bully: initiate election, ping higher IDs. If no higher reply, declare victory.","Chang-Roberts: send ID around ring. Larger IDs suppress smaller. When a message returns to its sender, that sender is leader."],
+ pseudo:"Bully algorithm:\n  process P starts election:\n    send Election to all higher-ID processes\n    if no response within timeout: P is leader\n    if response: wait for higher process to declare\n  a process with higher ID responds with OK and starts its own election\n\nChang-Roberts (ring):\n  process P sends its ID to neighbour\n  on receiving ID:\n    if incoming > mine: forward incoming\n    if incoming < mine: drop; if not yet sent, send mine\n    if incoming == mine: I am leader\n\nMessage complexity:\n  bully: O(n^2) worst case\n  Chang-Roberts: O(n log n) average, O(n^2) worst",
+ uses:"Coordinating distributed systems, electing a primary, election in ring topologies.",
+ strength:"Simple algorithms that do not require consensus on a value.",
+ limits:"Assume reliable FIFO channels and no failures during the election.",
+ pitfall:"Both algorithms can produce multiple leaders if the network partitions.",
+ question:"Which election algorithm is more message-efficient in a ring?",
+ answer:"Chang-Roberts, with O(n log n) average message complexity.",
+ demo:"leader",sample:"8\n5",refs:[
+  ["Garcia-Molina, Elections in a distributed computing system, IEEE TC 1982","https://doi.org/10.1109/TC.1982.1675885"],
+  ["Chang and Roberts, An improved algorithm for decentralized extrema-finding in circular configurations of processes, CACM 1979","https://doi.org/10.1145/359094.359101"],
+  ["Lynch, Distributed Algorithms, Chapter 3","https://www.sciencedirect.com/book/9781558603486/distributed-algorithms"]]},
+/* Ch 12 */
+{id:"rcu-hazard",title:"RCU and hazard pointers",level:5,kind:"Memory reclamation",status:"Runnable teaching lab",
+ summary:"Read-Copy Update (RCU) allows lock-free readers by deferring reclamation. Hazard pointers let lock-free data structures publish the pointers they are reading so others do not free them.",
+ mental:"Don't free what someone else is reading",
+ mentalText:"A reader publishes its intent to read a pointer. The writer waits until all readers are done before freeing.",
+ steps:["RCU: readers enter a critical section, read, then leave. Writers publish new pointers and wait for a grace period before freeing old ones.","Hazard pointers: each thread has a hazard list. Before reading, publish the pointer. Before freeing, check all hazard lists."],
+ pseudo:"RCU:\n  reader: rcu_read_lock(); p = ptr; use(p); rcu_read_unlock()\n  writer: new = copy(p); modify(new); publish(new); synchronize_rcu(); free(p)\n\n  Grace period: every reader that started before synchronize_rcu has finished\n\nHazard pointers:\n  reader:\n    loop:\n      hazard[0] = ptr\n      if hazard[0] != ptr: retry\n      use(ptr)\n      hazard[0] = NULL\n  writer (retire):\n    add retired pointer to a list\n    periodically scan all hazard lists\n    free any retired pointer not in any hazard list\n\nTrade-offs:\n  RCU: no reader overhead in the fast path, grace period is slow\n  Hazard pointers: reader writes a shared variable, slower but bounded",
+ uses:"Kernel data structures (RCU), lock-free hash maps, concurrent data structures in user space.",
+ strength:"Enables safe memory reclamation in lock-free structures.",
+ limits:"RCU grace period can be long. Hazard pointer scan is O(threads * K) per reclaim.",
+ pitfall:"Freeing memory too early. A reader may still hold a reference. Always respect the reclamation protocol.",
+ question:"What is a grace period in RCU?",
+ answer:"The interval during which every reader that existed before the writer's update has finished its critical section.",
+ demo:"rcu",sample:"4\n2",refs:[
+  ["McKenney and Slingwine, Read-copy update: using execution history to solve concurrency problems, PDCS 1998","https://doi.org/10.1002/cpe.530"],
+  ["Michael, Hazard pointers: safe memory reclamation for lock-free objects, IEEE TPDS 2004","https://doi.org/10.1109/TPDS.2004.8"],
+  ["McKenney, Is Parallel Programming Hard, And, If So, What Can You Do About It?, 2020","https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html"]]},
+{id:"epoch-reclamation",title:"Epoch-based reclamation",level:5,kind:"Memory reclamation",status:"Runnable teaching lab",
+ summary:"Epoch-based reclamation groups time into epochs. Each thread announces its epoch. Objects retired in an epoch are freed after all threads have passed that epoch.",
+ mental:"Tickets that move through time",
+ mentalText:"Each thread holds a ticket for the current epoch. When all threads hold tickets newer than an epoch, its garbage can be freed.",
+ steps:["Maintain a global epoch counter.","Each thread has a local epoch, which it updates when entering a critical section.","Retired objects are attached to the current epoch.","When all threads have moved past an epoch, its garbage is freed."],
+ pseudo:"Epoch-based reclamation:\n  global_epoch = 0\n  each thread has: local_epoch, active flag\n\n  enter_critical():\n    local_epoch = global_epoch\n    active = true\n\n  exit_critical():\n    active = false\n\n  retire(p):\n    attach p to retire list of global_epoch\n\n  try_advance():\n    if all active threads have local_epoch == global_epoch:\n      global_epoch += 1\n      free objects retired two epochs ago\n\nProperties:\n  fast path: one read\n  reclamation delayed up to two epochs\n  does not bound the number of retired objects if threads stall",
+ uses:"Lock-free data structures, concurrent hash maps, crossbeam (Rust).",
+ strength:"Simple and fast for the reader path.",
+ limits:"A stalled thread delays reclamation indefinitely.",
+ pitfall:"Assuming epoch reclamation is fully async-signal-safe. Long-running readers block reclamation.",
+ question:"Why does epoch-based reclamation need to be careful about stalled threads?",
+ answer:"If a thread stays in an old epoch, the global epoch cannot advance, and retired objects accumulate.",
+ demo:"epoch",sample:"4\n1",refs:[
+  ["Fraser, Practical lock-freedom, PhD thesis, Cambridge 2004","https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-579.pdf"],
+  ["Hart, McKenney, Brown, Walpole, Performance of memory reclamation for lockless synchronization, JPDC 2007","https://doi.org/10.1016/j.jpdc.2007.04.010"],
+  ["Crossbeam documentation, Epoch-based reclamation","https://docs.rs/crossbeam-epoch/latest/crossbeam_epoch/"]]},
+{id:"ot-crdt",title:"Operational transformation and CRDTs",level:5,kind:"Collaboration",status:"Runnable teaching lab",
+ summary:"OT transforms concurrent operations so they can be applied in any order and converge. CRDTs design data structures whose operations commute, so replicas converge without coordination.",
+ mental:"Convergence without coordination",
+ mentalText:"OT: transform incoming operations against local ones. CRDT: define operations that naturally commute or are idempotent.",
+ steps:["OT: track operations and versions. When receiving an operation, transform it against unseen local operations.","CRDT: choose a data structure with a join-semilattice. Merge replicas by taking the least upper bound."],
+ pseudo:"Operational Transformation (OT):\n  every operation has a base version\n  server transforms concurrent operations against each other\n  ensures the same final document on all sites\n\n  Classic for text editors (Google Docs uses a variant)\n\nCRDT (Conflict-free Replicated Data Type):\n  state-based: merge(s1, s2) is a least upper bound\n    requires the state to form a join-semilattice\n  operation-based: commutativity of operations\n    requires causal delivery\n\n  Common CRDTs:\n    G-Counter: grow-only counter\n    PN-Counter: positive/negative counter\n    G-Set, 2P-Set, OR-Set\n    LWW-Register, MV-Register\n    RGA, Treedoc, Logoot, Yjs\n\n  Properties:\n    strong eventual consistency\n    convergence without coordination",
+ uses:"Collaborative editors, distributed databases, offline-first apps.",
+ strength:"Converge without coordination. Work offline.",
+ limits:"Metadata overhead. Some operations are hard to model as CRDTs.",
+ pitfall:"Assuming strong consistency. CRDTs give eventual consistency, not linearizability.",
+ question:"What is the difference between OT and CRDTs?",
+ answer:"OT transforms operations against each other. CRDTs design the data structure so operations converge without transformation.",
+ demo:"crdt",sample:"counter\nA B C",refs:[
+  ["Ellis and Gibbs, Concurrency control in groupware systems, SIGMOD 1989","https://doi.org/10.1145/67544.66963"],
+  ["Shapiro, Preguica, Baquero, Zawirski, Conflict-free replicated data types, SSS 2011","https://doi.org/10.1007/978-3-642-24550-3_29"],
+  ["Kleppmann, Data Intensive Applications, O'Reilly 2017, Chapter 5","https://dataintensive.net/"]]},
+];
+
+const LESSONS=RAW.map(mk);
+const byId=Object.fromEntries(LESSONS.map(x=>[x.id,x]));
+
+/* ============================================================
+   Code examples
+   ============================================================ */
+const CODE={
+ "amdahl":{python:`# Amdahl and Gustafson\ndef amdahl(s, P):\n    return 1 / (s + (1 - s) / P)\n\n\ndef gustafson(s, P):\n    return s + (1 - s) * P\n\n\ns = 0.9\nfor P in [1, 2, 4, 8, 16, 64, 1024]:\n    print(f"P = {P:>4}: Amdahl = {amdahl(s, P):>8.3f}   Gustafson = {gustafson(s, P):>8.3f}")\n\nprint(f"Amdahl limit = {1/(1-s):.3f}")\n`},
+ "race":{python:`# Deterministic lost-update illustration, then a synchronized counter.
+import threading
+
+counter = 0
+read_barrier = threading.Barrier(2)
+
+def broken_increment():
+    global counter
+    old = counter               # both threads read the same value
+    read_barrier.wait()         # force both reads to happen before either write
+    counter = old + 1           # one increment is lost
+
+threads = [threading.Thread(target=broken_increment) for _ in range(2)]
+for t in threads: t.start()
+for t in threads: t.join()
+print("broken result:", counter, "(expected 2)")
+
+lock = threading.Lock()
+counter = 0
+def safe_increment():
+    global counter
+    with lock:
+        counter += 1
+
+threads = [threading.Thread(target=safe_increment) for _ in range(2)]
+for t in threads: t.start()
+for t in threads: t.join()
+print("safe result:", counter, "(expected 2)")
+`},
+ "reduce":{python:`from functools import reduce\n\n\ndef tree_reduce(a, op):\n    a = list(a)\n    while len(a) > 1:\n        a = [op(a[i], a[i+1]) for i in range(0, len(a) - 1, 2)] + ([a[-1]] if len(a) % 2 else [])\n    return a[0]\n\n\ndata = list(range(1, 9))\nprint("sequential reduce:", reduce(lambda x, y: x + y, data))\nprint("tree reduce:      ", tree_reduce(data, lambda x, y: x + y))\n\n# Show depth\nn = len(data)\ndepth = 0\nwhile n > 1:\n    depth += 1\n    n = (n + 1) // 2\nprint("tree depth:", depth)\n`},
+ "scan":{python:`def inclusive_scan(x, op):\n    out = list(x)\n    n = len(out)\n    d = 1\n    while d < n:\n        new = list(out)\n        for i in range(n):\n            if i >= d:\n                new[i] = op(out[i - d], out[i])\n        out = new\n        d *= 2\n    return out\n\n\ndata = [3, 1, 4, 1, 5, 9, 2, 6]\nprint("inclusive scan (sum):", inclusive_scan(data, lambda a, b: a + b))\n`},
+ "blelloch":{python:`def blelloch_exclusive_scan(values, identity=0):
+    # Pad to a power of two, then remove padding from the result.
+    values = list(values)
+    original_length = len(values)
+    if not values:
+        return []
+    size = 1
+    while size < original_length:
+        size *= 2
+    a = values + [identity] * (size - original_length)
+
+    # Up-sweep: build subtree reductions.
+    d = 1
+    while d < size:
+        for i in range(0, size, 2 * d):
+            a[i + 2*d - 1] += a[i + d - 1]
+        d *= 2
+
+    # Down-sweep: propagate exclusive prefixes.
+    a[size - 1] = identity
+    d = size // 2
+    while d >= 1:
+        for i in range(0, size, 2 * d):
+            left = i + d - 1
+            right = i + 2*d - 1
+            temp = a[left]
+            a[left] = a[right]
+            a[right] += temp
+        d //= 2
+    return a[:original_length]
+
+
+values = [3, 1, 4, 1, 5, 9, 2, 6]
+print("exclusive scan:", blelloch_exclusive_scan(values))
+`},
+ "producer-consumer":{python:`import threading\nimport queue\nimport time\n\nq = queue.Queue(maxsize=5)\n\n\ndef producer(n):\n    for i in range(n):\n        q.put(i)\n        print(f"put {i}")\n        time.sleep(0.01)\n    q.put(None)\n\n\ndef consumer():\n    while True:\n        item = q.get()\n        if item is None: break\n        print(f"got {item}")\n        q.task_done()\n\n\np = threading.Thread(target=producer, args=(5,))\nc = threading.Thread(target=consumer)\np.start(); c.start()\np.join(); c.join()\nprint("done")\n`},
+ "barrier":{python:`import threading\n\nN = 4\nbarrier = threading.Barrier(N)\nresults = [0] * N\n\n\ndef worker(i):\n    total = 0\n    for k in range(100):\n        total += k\n    results[i] = total\n    print(f"worker {i} reaching barrier")\n    barrier.wait()\n    print(f"worker {i} past barrier, sum = {sum(results)}")\n\n\nthreads = [threading.Thread(target=worker, args=(i,)) for i in range(N)]\nfor t in threads: t.start()\nfor t in threads: t.join()\n`},
+ "cas-counter":{python:`import threading\nimport ctypes\n\n# Python does not expose CAS directly, but we can use a lock-free-style loop\n# with a mutex to illustrate the semantics. In C, use __atomic_compare_exchange_n.\n\nlock = threading.Lock()\ncounter = 0\n\ndef cas_loop():\n    global counter\n    while True:\n        old = counter\n        new = old + 1\n        with lock:\n            if counter == old:\n                counter = new\n                return\n\nthreads = [threading.Thread(target=cas_loop) for _ in range(8)]\nfor t in threads: t.start()\nfor t in threads: t.join()\nprint("counter:", counter)\n`},
+ "fork-join":{python:`# Shared executor: split into chunks, fork tasks, then join results.
+from concurrent.futures import ThreadPoolExecutor
+
+
+def parallel_sum(data, workers=4):
+    workers = max(1, workers)
+    chunk_size = max(1, (len(data) + workers - 1) // workers)
+    chunks = [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = [executor.submit(sum, chunk) for chunk in chunks]
+        partials = [future.result() for future in futures]  # join
+    return sum(partials)
+
+
+data = list(range(10000))
+print("parallel-style sum:", parallel_sum(data, workers=4))
+print("expected:", sum(data))
+# For CPU-bound pure Python, threads may not speed this up because of the GIL.
+`},
+ "work-stealing":{python:`# Simplified work stealing (illustration only)\nimport random\n\n\ndef simulate(num_workers, num_tasks):\n    deques = [[] for _ in range(num_workers)]\n    for t in range(num_tasks):\n        deques[t % num_workers].append(t)\n    steals = 0\n    processed = 0\n    while any(deques):\n        for w in range(num_workers):\n            if deques[w]:\n                deques[w].pop()  # owner pops from the bottom\n                processed += 1\n            else:\n                # steal from the top of another deque\n                for other in range(num_workers):\n                    if deques[other]:\n                        deques[other].pop(0)\n                        steals += 1\n                        processed += 1\n                        break\n    return processed, steals\n\n\nprint(simulate(4, 100))\n`},
+ "bsp":{python:`# BSP-style computation with supersteps\n\ndef bsp_sum(data, num_supersteps):\n    n = len(data)\n    chunk = (n + num_supersteps - 1) // num_supersteps\n    partials = []\n    for s in range(num_supersteps):\n        lo = s * chunk\n        hi = min(lo + chunk, n)\n        partials.append(sum(data[lo:hi]))\n        print(f"superstep {s}: partial = {partials[-1]}")\n    return sum(partials)\n\n\ndata = list(range(1000))\nprint("total:", bsp_sum(data, 4))\n`},
+ "parallel-matmul":{python:`import numpy as np\nfrom concurrent.futures import ThreadPoolExecutor\n\n\ndef parallel_matmul(A, B, num_workers=4):\n    n = A.shape[0]\n    C = np.zeros((n, n))\n    rows_per_worker = (n + num_workers - 1) // num_workers\n\n    def worker(start):\n        end = min(start + rows_per_worker, n)\n        for i in range(start, end):\n            for j in range(n):\n                C[i, j] = sum(A[i, k] * B[k, j] for k in range(n))\n\n    with ThreadPoolExecutor() as ex:\n        futures = [ex.submit(worker, i * rows_per_worker) for i in range(num_workers)]\n        for f in futures: f.result()\n    return C\n\n\nA = np.random.rand(64, 64)\nB = np.random.rand(64, 64)\nC = parallel_matmul(A, B)\nprint("matches numpy:", np.allclose(C, A @ B))\n`},
+ "mapreduce":{python:`from collections import defaultdict\n\n\ndef word_count(documents):\n    # Map phase\n    mapped = []\n    for doc_id, text in documents:\n        for word in text.lower().split():\n            mapped.append((word, 1))\n    # Shuffle\n    grouped = defaultdict(list)\n    for k, v in mapped:\n        grouped[k].append(v)\n    # Reduce\n    return {k: sum(vs) for k, vs in grouped.items()}\n\n\ndocuments = [\n    (1, "the quick brown fox"),\n    (2, "the lazy dog"),\n    (3, "the fox and the dog"),\n]\nresult = word_count(documents)\nfor word, count in sorted(result.items(), key=lambda x: -x[1]):\n    print(f"{word}: {count}")\n`},
+ "spark":{python:`# Spark-like pipeline using Python\nfrom collections import defaultdict\n\n\ndef count_words(lines):\n    pairs = []\n    for line in lines:\n        for word in line.lower().split():\n            pairs.append((word, 1))\n    grouped = defaultdict(list)\n    for k, v in pairs:\n        grouped[k].append(v)\n    return {k: sum(vs) for k, vs in grouped.items()}\n\n\ndata = [\n    "the quick brown fox",\n    "the lazy dog",\n    "the fox and the dog",\n]\nprint(count_words(data))\n`},
+ "shuffle":{python:`import random\nfrom collections import defaultdict\n\n\ndef hash_partition(records, num_partitions):\n    parts = defaultdict(list)\n    for key, value in records:\n        p = hash(key) % num_partitions\n        parts[p].append((key, value))\n    return parts\n\n\nrandom.seed(0)\nkeys = ["alpha", "beta", "gamma", "delta", "epsilon"] + ["hot"] * 20\nrecords = [(k, i) for i, k in enumerate(keys)]\nparts = hash_partition(records, 4)\nfor p, rs in sorted(parts.items()):\n    print(f"partition {p}: {len(rs)} records")\n`},
+ "vector-clock":{python:`class VectorClock:\n    def __init__(self, n):\n        self.v = [0] * n\n    def tick(self, i):\n        self.v[i] += 1\n    def send(self, i):\n        self.v[i] += 1\n        return list(self.v)\n    def receive(self, i, msg):\n        for k in range(len(self.v)):\n            self.v[k] = max(self.v[k], msg[k])\n        self.v[i] += 1\n    def __repr__(self):\n        return str(self.v)\n\n\nA = VectorClock(3)\nB = VectorClock(3)\nC = VectorClock(3)\n\nA.tick(0)\nmsg = A.send(0)\nB.receive(1, msg)\nB.tick(1)\nmsg = B.send(1)\nC.receive(2, msg)\nprint("A:", A)\nprint("B:", B)\nprint("C:", C)\n`},
+ "chandy-lamport":{python:`# Chandy-Lamport snapshot (simulated)\nclass Process:\n    def __init__(self, i):\n        self.i = i\n        self.state = 0\n        self.recorded = False\n        self.channel_state = {}\n    def local(self, d):\n        self.state += d\n    def record(self):\n        self.recorded = True\n        return self.state\n\n\nprocesses = [Process(i) for i in range(3)]\nfor p in processes:\n    p.local(10 * (p.i + 1))\n\n# Initiator\nprocesses[0].record()\n# Each process records on first marker\nfor p in processes[1:]:\n    p.record()\n\nfor p in processes:\n    print(f"process {p.i}: state = {p.state}, recorded = {p.recorded}")\n`},
+ "raft":{python:`# Teaching model of one Raft election; not a full Raft implementation.
+
+def elect_leader(node_ids, candidate_id, reachable=None):
+    reachable = set(node_ids if reachable is None else reachable)
+    voters = [node for node in node_ids if node in reachable]
+    quorum = len(node_ids) // 2 + 1
+    print(f"candidate {candidate_id} requests votes in term 1")
+    for node in voters:
+        print(f"node {node}: vote granted")
+    if candidate_id in reachable and len(voters) >= quorum:
+        print(f"node {candidate_id} becomes leader (votes={len(voters)}, quorum={quorum})")
+        return candidate_id
+    print(f"no leader elected (votes={len(voters)}, quorum={quorum})")
+    return None
+
+
+nodes = list(range(5))
+elect_leader(nodes, candidate_id=2)
+`},
+ "chain":{python:`# Simplified chain-replication write path.
+class Replica:
+    def __init__(self, replica_id):
+        self.replica_id = replica_id
+        self.log = []
+
+    def receive(self, operation):
+        self.log.append(operation)
+
+
+replicas = [Replica(i) for i in range(4)]
+operations = ["v1", "v2"]
+for operation in operations:
+    for replica in replicas:      # head forwards through each replica
+        replica.receive(operation)
+    print(f"{operation}: acknowledged by tail after {len(replicas)} replicas append")
+
+print("tail state:", replicas[-1].log)
+print("all logs agree:", all(r.log == replicas[0].log for r in replicas))
+`},
+ "2pc":{python:`class Participant:\n    def __init__(self):\n        self.state = "init"\n        self.locked = False\n    def prepare(self):\n        self.locked = True\n        self.state = "prepared"\n        return True\n    def commit(self):\n        self.state = "committed"\n        self.locked = False\n    def abort(self):\n        self.state = "aborted"\n        self.locked = False\n\n\nparticipants = [Participant() for _ in range(3)]\nvotes = [p.prepare() for p in participants]\nif all(votes):\n    for p in participants: p.commit()\nelse:\n    for p in participants: p.abort()\n\nfor i, p in enumerate(participants):\n    print(f"participant {i}: {p.state}")\n`},
+ "swim":{python:`# Simplified failure-detector illustration: one node stops responding.
+def simulate_probe(n, failed_node, probes=5):
+    suspicion = 0
+    for attempt in range(1, probes + 1):
+        direct_ping_ok = False if attempt >= 2 else True
+        if not direct_ping_ok:
+            # Real SWIM can ask other peers to probe indirectly.
+            indirect_probe_ok = False
+            if not indirect_probe_ok:
+                suspicion += 1
+        print(f"probe {attempt}: direct_ok={direct_ping_ok}, suspicion={suspicion}")
+    print(f"node {failed_node} may be declared failed after policy threshold")
+
+
+simulate_probe(n=5, failed_node=2)
+# Suspicion is evidence based on timeouts, not proof of a crash.
+`},
+ "merkle":{python:`import hashlib\n\n\ndef h(data):\n    return hashlib.sha256(data).digest()\n\n\ndef merkle_root(leaves):\n    level = [h(leaf) for leaf in leaves]\n    while len(level) > 1:\n        if len(level) % 2:\n            level.append(level[-1])\n        level = [h(level[i] + level[i + 1]) for i in range(0, len(level), 2)]\n    return level[0]\n\n\nleaves = [f"key{i}".encode() for i in range(8)]\nprint("root:", merkle_root(leaves).hex()[:32])\n\n# Change one leaf\nleaves[3] = b"changed"\nprint("root after change:", merkle_root(leaves).hex()[:32])\n`},
+ "consistent-hashing":{python:`import hashlib
+
+
+def hash32(text):
+    # Stable illustrative 32-bit hash for this example.
+    value = 2166136261
+    for byte in text.encode():
+        value = ((value ^ byte) * 16777619) & 0xffffffff
+    return value
+
+
+def build_ring(nodes, vnodes=100):
+    ring = []
+    for node in nodes:
+        for i in range(vnodes):
+            ring.append((hash32(f"{node}-{i}"), node))
+    return sorted(ring)
+
+
+def owner(ring, key):
+    h = hash32(key)
+    for point, node in ring:
+        if point >= h:
+            return node
+    return ring[0][1]
+
+
+nodes = ["A", "B", "C", "D"]
+keys = [f"key-{i}" for i in range(1000)]
+ring = build_ring(nodes)
+before = {key: owner(ring, key) for key in keys}
+after_ring = build_ring(nodes + ["E"])
+after = {key: owner(after_ring, key) for key in keys}
+moved = sum(before[k] != after[k] for k in keys)
+print(f"keys moved after adding E: {moved}/{len(keys)} ({moved/len(keys):.1%})")
+`},
+"chord":{python:`def successor(key, node_ids):
+    for node in sorted(node_ids):
+        if node >= key:
+            return node
+    return min(node_ids)  # wrap around the ring
+
+
+def route(key, node_ids):
+    current = min(node_ids)
+    trace = [current]
+    while current != successor(key, node_ids) and len(trace) <= len(node_ids):
+        candidates = [n for n in node_ids if current < n < key]
+        current = max(candidates) if candidates else successor(key, node_ids)
+        trace.append(current)
+    if trace[-1] != successor(key, node_ids):
+        trace.append(successor(key, node_ids))
+    return trace
+
+
+nodes = [4, 9, 15, 22, 27]
+key = 18
+print("nodes:", nodes)
+print("key owner:", successor(key, nodes))
+print("illustrative route:", route(key, nodes))
+`},
+"kademlia":{python:`def xor_distance(a, b):
+    return a ^ b
+
+
+nodes = [3, 8, 14, 21, 29, 37, 43, 58]
+target = 42
+ranked = sorted((xor_distance(node, target), node) for node in nodes)
+print("target:", target)
+print("closest peers by XOR distance:")
+for distance, node in ranked[:4]:
+    print(f"node={node:>2}, xor distance={distance}")
+`},
+"leader":{python:`def bully_election(node_ids, initiator):
+    higher = [node for node in node_ids if node > initiator]
+    print(f"P{initiator} starts an election")
+    for node in higher:
+        print(f"P{initiator} -> P{node}: ELECTION")
+        print(f"P{node} -> P{initiator}: OK")
+    leader = max(node_ids)
+    print(f"P{leader} announces LEADER")
+    return leader
+
+
+nodes = list(range(8))
+leader = bully_election(nodes, 5)
+print("elected leader:", leader)
+`},
+"crdt":{python:`# Grow-only counter CRDT: merge replicas by taking per-replica maxima.
+class GCounter:
+    def __init__(self, replica_ids):
+        self.counts = {r: 0 for r in replica_ids}
+
+    def increment(self, replica_id, amount=1):
+        self.counts[replica_id] += amount
+
+    def merge(self, other):
+        for replica_id, value in other.counts.items():
+            self.counts[replica_id] = max(self.counts.get(replica_id, 0), value)
+
+    def value(self):
+        return sum(self.counts.values())
+
+
+replicas = [GCounter(["A", "B", "C"]) for _ in range(3)]
+replicas[0].increment("A", 2)
+replicas[1].increment("B", 3)
+replicas[2].increment("C", 1)
+for i in range(1, len(replicas)):
+    replicas[0].merge(replicas[i])
+print("merged state:", replicas[0].counts)
+print("counter value:", replicas[0].value())
+`},
+"domain-decomposition":{python:`def relax_1d(values, left_boundary, right_boundary, iterations):
+    u = [left_boundary] + list(values) + [right_boundary]
+    for _ in range(iterations):
+        old = u[:]
+        for i in range(1, len(u) - 1):
+            u[i] = 0.5 * (old[i - 1] + old[i + 1])
+    return u[1:-1]
+
+
+n = 16
+initial = [0.0] * n
+result = relax_1d(initial, 0.0, 100.0, 20)
+print("solution:", [round(x, 2) for x in result])
+print("In a parallel solver, neighbouring subdomains exchange boundary values each iteration.")
+`},
+"hlc":{python:`# Simplified HLC receive rule for a single event.
+def hlc_receive(local, remote, physical_now):
+    l, c = local
+    lm, cm = remote
+    new_l = max(physical_now, l, lm)
+    if new_l == l and new_l == lm:
+        new_c = max(c, cm) + 1
+    elif new_l == l:
+        new_c = c + 1
+    elif new_l == lm:
+        new_c = cm + 1
+    else:
+        new_c = 0
+    return new_l, new_c
+
+
+local = (995, 2)
+remote = (950, 3)
+print("local before:", local)
+print("remote message:", remote)
+print("local after receive:", hlc_receive(local, remote, physical_now=1000))
+`},
+"paxos":{python:`# A single-decree Paxos teaching model, not a production implementation.
+acceptors = [None] * 5
+proposal_number = 1
+proposal_value = "A"
+quorum = len(acceptors) // 2 + 1
+
+# Prepare / promise: this toy example assumes every acceptor is reachable.
+promises = len(acceptors)
+print(f"prepare n={proposal_number}: promises={promises}/{len(acceptors)}")
+
+if promises >= quorum:
+    # No prior accepted value exists in this minimal scenario.
+    accepted = 0
+    for i in range(len(acceptors)):
+        acceptors[i] = (proposal_number, proposal_value)
+        accepted += 1
+    print(f"accept: {accepted}/{len(acceptors)}")
+    if accepted >= quorum:
+        print("chosen value:", proposal_value)
+`},
+"replication":{python:`# Illustrative leader-based replication log.
+replicas = 5
+entries = ["write x=1", "write y=2", "write x=3"]
+quorum = replicas // 2 + 1
+
+for index, entry in enumerate(entries, start=1):
+    acknowledgements = replicas  # assume all replicas are reachable
+    committed = acknowledgements >= quorum
+    print(f"index={index}, entry={entry!r}, acknowledgements={acknowledgements}, committed={committed}")
+print("This is a replication illustration, not a full VR or Zab protocol.")
+`},
+"bft-quorum":{python:`def bft_thresholds(n):
+    f = (n - 1) // 3
+    safe = n >= 3 * f + 1
+    return f, 2 * f + 1, safe
+
+
+for n in [4, 7, 10, 13]:
+    f, quorum, safe = bft_thresholds(n)
+    print(f"n={n:>2}, tolerate f={f}, quorum={quorum}, n>=3f+1={safe}")
+`},
+"rcu":{python:`# Timeline illustration: a retired object cannot be freed while a reader may use it.
+reader_active = True
+current_version = "v1"
+retired = []
+
+reader_pointer = current_version
+current_version = "v2"  # writer publishes a replacement
+retired.append("v1")
+print("published:", current_version)
+print("retired objects:", retired)
+print("reader still holds:", reader_pointer)
+print("safe to reclaim now?", not reader_active)
+
+reader_active = False  # grace period has completed
+print("safe to reclaim after reader exits?", not reader_active)
+`},
+"epoch":{python:`threads = {"A": 2, "B": 2, "C": 1}
+retired_in_epoch = {1: ["node-old"]}
+current_epoch = 2
+
+safe = all(epoch > 1 for epoch in threads.values())
+print("thread epochs:", threads)
+print("safe to reclaim epoch 1?", safe)
+threads["C"] = 3  # the last lagging thread leaves its old read section
+safe = all(epoch > 1 for epoch in threads.values())
+print("after C advances:", threads)
+print("safe to reclaim epoch 1?", safe)
+`}
+};
+
+const STORAGE_KEY = "aznur-parallel-distributed-lab-v1";
+const $ = (selector, root=document) => root.querySelector(selector);
+const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[ch]));
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const num = (value, fallback=0) => { const v=Number(value); return Number.isFinite(v) ? v : fallback; };
+const fmt = value => Number.isFinite(value) ? Number(value.toPrecision(8)).toString() : String(value);
+const lines = text => String(text ?? "").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+const numberList = text => String(text ?? "").split(/[\s,;]+/).map(Number).filter(Number.isFinite);
+const sampleDefaults = {
+ "domain-decomposition":"16\n4\n5", "hlc":"1000\n950\n3", "paxos":"5\nA", "replication":"5\n3",
+ "bft-quorum":"7\n2", "rcu":"1\n1", "epoch":"4\n1"
+};
+const state = {current:"", completed:new Set(), theme:"dark", answers:{}, notes:{}};
+
+function loadState(){
+  try {
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+    if(saved && typeof saved==="object"){
+      state.current=LESSONS.some(x=>x.id===saved.current)?saved.current:"";
+      state.completed=new Set(Array.isArray(saved.completed)?saved.completed.filter(id=>byId[id]):[]);
+      state.theme=["light","dark","system"].includes(saved.theme)?saved.theme:"dark";
+      state.answers=saved.answers&&typeof saved.answers==="object"?saved.answers:{};
+      state.notes=saved.notes&&typeof saved.notes==="object"?saved.notes:{};
+    }
+  } catch(_){ /* storage may be disabled when opened from a restricted file URL */ }
+}
+function saveState(){
+  try { localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,current:state.current,completed:[...state.completed],theme:state.theme,answers:state.answers,notes:state.notes})); }
+  catch(_){ /* export remains available when automatic storage is blocked */ }
+  updateProgress();
+}
+function toast(message){
+  const el=$("#toast"); if(!el)return;
+  el.textContent=message; el.classList.add("show");
+  clearTimeout(toast.timer); toast.timer=setTimeout(()=>el.classList.remove("show"),2200);
+}
+function setTheme(theme){
+  state.theme=theme;
+  const effective=theme==="system"?(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"):theme;
+  document.documentElement.dataset.theme=effective;
+  const select=$("#themeSelect"); if(select)select.value=theme;
+  saveState();
+}
+function updateProgress(){
+  const n=LESSONS.length, done=state.completed.size;
+  const text=$("#progressText"), fill=$("#progressFill"), count=$("#lessonCount"), catalog=$("#catalogCount");
+  if(text)text.textContent=`${done} / ${n}`;
+  if(fill)fill.style.width=`${n?done/n*100:0}%`;
+  if(count)count.textContent=String(n);
+  if(catalog)catalog.textContent=`${n} lessons · ${CHAPTERS.length} chapters · ${done} completed`;
+}
+function getDemoKey(lesson){return lesson.demo&&lesson.demo!=="none"?lesson.demo:"none";}
+function activeChapter(lesson){return CHAPTERS.find(c=>c.ids.includes(lesson.id));}
+function renderTree(){
+  const query=$("#searchInput").value.trim().toLowerCase();
+  const filter=$("#chapterFilter").value;
+  const host=$("#courseTree"); let html=""; let shown=0;
+  for(const ch of CHAPTERS){
+    if(filter!=="all"&&filter!==ch.id)continue;
+    const items=ch.ids.map(id=>byId[id]).filter(Boolean).filter(x=>!query||[x.title,x.summary,x.kind,x.question,x.uses].join(" ").toLowerCase().includes(query));
+    if(!items.length)continue;
+    shown+=items.length;
+    html+=`<section><div class="group-label"><span>${esc(ch.title)}</span><span>${items.length}</span></div>`;
+    for(const lesson of items){
+      html+=`<button class="link ${lesson.id===state.current?"active":""}" data-lesson="${esc(lesson.id)}" title="${esc(lesson.title)}"><span class="num">${String(LESSONS.indexOf(lesson)+1).padStart(2,"0")}</span><span class="name">${esc(lesson.title)}</span>${state.completed.has(lesson.id)?'<span class="done" aria-label="Completed">✓</span>':""}</button>`;
+    }
+    html+="</section>";
+  }
+  host.innerHTML=html||`<div class="muted empty">No lessons match this search.</div>`;
+  $("#lessonCount").textContent=String(shown);
+}
+function renderHome(){
+  const done=state.completed.size;
+  $("#mainView").innerHTML=`<div class="breadcrumb">AZNUR / LEARNING SYSTEMS</div>
+  <section class="home-hero"><div class="eyebrow">Parallel computing · Distributed systems</div><h1>Understand the systems that make many computers work as one.</h1><p>This self-contained course moves from threads and parallel algorithms to distributed clocks, consensus, replication, fault tolerance, naming, and collaborative data. Every lesson explains the core idea, the assumptions, the common failure mode, and where the method is used.</p><div class="header-actions"><button class="btn primary" data-action="continue">${done?"Continue learning":"Start with lesson 1"}</button><button class="btn" data-action="progress">View progress</button></div></section>
+  <div class="stats"><div class="stat"><strong>${LESSONS.length}</strong><span>Lessons</span></div><div class="stat"><strong>${CHAPTERS.length}</strong><span>Chapters</span></div><div class="stat"><strong>${done}</strong><span>Completed</span></div><div class="stat"><strong>${Math.round(done/LESSONS.length*100)}%</strong><span>Course progress</span></div></div>
+  <section class="panel"><div class="panel-head"><h2>Course path</h2><p>Choose a chapter to browse its lessons. Start with foundations if concurrency and parallelism are new to you.</p></div><div class="body"><div class="chapter-cards">${CHAPTERS.map((ch,i)=>`<button class="chapter-card" data-chapter="${esc(ch.id)}"><span class="num">CHAPTER ${String(i+1).padStart(2,"0")} · ${ch.ids.length} LESSONS</span><strong>${esc(ch.title.replace(/^\d+\.\s*/,""))}</strong><p>${esc(ch.desc)}</p></button>`).join("")}</div></div></section>
+  <div class="notice info"><strong>How to use the lab:</strong> read the explanation, inspect the pseudocode, then run the JavaScript teaching simulation when one is available. Python examples are reference code shown in the page; they are not executed by this offline HTML file.</div>
+  <div class="footer"><span>AZNUR Parallel &amp; Distributed Lab</span><span>Single HTML file · no external runtime required for interactive labs</span></div>`;
+}
+function renderProgress(){
+  const done=state.completed.size, percent=Math.round(done/LESSONS.length*100);
+  const chapters=CHAPTERS.map(ch=>{const finished=ch.ids.filter(id=>state.completed.has(id)).length;return `<div class="mini progress-chapter"><div class="progress-row"><strong>${esc(ch.title)}</strong><span>${finished}/${ch.ids.length}</span></div><div class="progress"><div style="width:${finished/ch.ids.length*100}%"></div></div></div>`}).join("");
+  const unfinished=LESSONS.filter(l=>!state.completed.has(l.id));
+  $("#mainView").innerHTML=`<div class="breadcrumb">AZNUR / PROGRESS</div><header class="header"><div class="eyebrow">Learning overview</div><h1>Your progress</h1><p>Completion is saved in this browser when local storage is available. Use Export to keep a portable backup or move progress to another browser.</p><div class="tags"><span class="tag good">${done} completed</span><span class="tag">${LESSONS.length-done} remaining</span><span class="tag">${percent}% complete</span></div></header><section class="panel"><div class="panel-head"><h2>Chapter completion</h2><p>Progress by course section.</p></div><div class="body"><div class="two">${chapters}</div></div></section><section class="panel"><div class="panel-head"><h2>Next lessons</h2><p>Continue with the first incomplete lesson.</p></div><div class="body">${unfinished.slice(0,8).map(l=>`<button class="link progress-link" data-lesson="${esc(l.id)}"><span class="num">${String(LESSONS.indexOf(l)+1).padStart(2,"0")}</span><span class="name">${esc(l.title)}</span><span>Open →</span></button>`).join("")||"<p>All lessons are marked complete.</p>"}<div class="header-actions"><button class="btn" data-action="reset-progress">Reset completion</button></div></div></section>`;
+}
+function lessonStatus(l){return state.completed.has(l.id)?"Completed":(getDemoKey(l)==="none"?"Concept lesson":"Interactive lab");}
+function renderLesson(id){
+  const lesson=byId[id]; if(!lesson){renderHome();return;}
+  state.current=id; saveState(); renderTree();
+  const ch=activeChapter(lesson), index=LESSONS.indexOf(lesson)+1;
+  const demo=getDemoKey(lesson), canRun=typeof RUNNERS[demo]==="function";
+  const code=CODE[lesson.codeKey||demo]||CODE[demo]||null;
+  const savedInput=state.answers[id]??lesson.sample??sampleDefaults[demo]??"";
+  const refs=(lesson.refs||[]).map(([title,url])=>`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)} ↗</a>`).join("");
+  const steps=(lesson.steps||[]).map(s=>`<li>${esc(s)}</li>`).join("");
+  const tabs=`<div class="tabs" role="tablist"><button class="tab active" data-tab="overview" role="tab" aria-selected="true">Lesson</button><button class="tab" data-tab="lab" role="tab" aria-selected="false">Interactive lab</button><button class="tab" data-tab="code" role="tab" aria-selected="false">Code & pseudocode</button><button class="tab" data-tab="references" role="tab" aria-selected="false">References</button></div>`;
+  $("#mainView").innerHTML=`<div class="breadcrumb">${esc(ch?ch.title:"COURSE")} / LESSON ${String(index).padStart(2,"0")}</div>
+    <header class="header"><div class="eyebrow">${esc(lesson.kind)} · Level ${lesson.level}</div><h1>${esc(lesson.title)}</h1><p>${esc(lesson.summary)}</p><div class="tags"><span class="tag">${esc(lesson.kind)}</span><span class="tag">Level ${lesson.level}</span><span class="tag ${state.completed.has(id)?"good":""}">${esc(lessonStatus(lesson))}</span></div><div class="header-actions"><button class="btn primary" data-action="toggle-complete" data-id="${esc(id)}">${state.completed.has(id)?"Mark incomplete":"Mark as complete"}</button><button class="btn" data-action="prev" ${index===1?"disabled":""}>← Previous</button><button class="btn" data-action="next" ${index===LESSONS.length?"disabled":""}>Next lesson →</button></div></header>
+    ${tabs}
+    <div class="tab-panel" data-panel="overview"><section class="panel"><div class="panel-head"><h2>The core idea</h2><p>Start with the mental model, then connect it to the formal method.</p></div><div class="body"><div class="idea"><div><p>${esc(lesson.mentalText)}</p><div class="takeaway"><strong>Problem it solves:</strong> ${esc(lesson.problem)}</div><p class="muted"><strong>Where it is used:</strong> ${esc(lesson.uses)}</p></div><aside class="mental"><small>Remember it this way</small><strong>${esc(lesson.mental)}</strong><p>${esc(lesson.invariant)}</p></aside></div></div></section>
+    <section class="panel"><div class="panel-head"><h2>How it works</h2><p>Follow these steps in order.</p></div><div class="body"><ol class="steps">${steps}</ol></div></section>
+    <div class="two"><section class="panel"><div class="panel-head"><h2>Strengths and limits</h2></div><div class="body"><div class="mini"><h3>Why it helps</h3><p>${esc(lesson.strength)}</p></div><div class="mini" style="margin-top:10px"><h3>What to watch for</h3><p>${esc(lesson.limits)}</p></div></div></section><section class="panel"><div class="panel-head"><h2>Common pitfall</h2></div><div class="body"><div class="notice"><strong>Watch out:</strong> ${esc(lesson.pitfall)}</div><p class="muted" style="font-size:12px;margin-top:12px"><strong>Input:</strong> ${esc(lesson.input)}<br><strong>Output:</strong> ${esc(lesson.output)}</p></div></section></div>
+    <section class="panel"><div class="panel-head"><h2>Check your understanding</h2><p>Answer the question, then reveal the explanation.</p></div><div class="body"><details class="practice"><summary>${esc(lesson.question)}</summary><p>${esc(lesson.answer)}</p></details><label class="field-label" for="lessonNote">Your notes (optional)</label><textarea class="note-input" id="lessonNote" placeholder="Write your own example or a question to revisit...">${esc(state.notes[id]||"")}</textarea><div class="header-actions"><button class="btn" data-action="save-note" data-id="${esc(id)}">Save notes</button></div></div></section></div>
+    <div class="tab-panel hidden" data-panel="lab"><section class="panel"><div class="panel-head"><h2>${canRun?"Interactive teaching lab":"Concept walkthrough"}</h2><p>${canRun?"Edit the sample input and run a local JavaScript simulation. Results are illustrative, not a substitute for testing a production implementation.":"This topic is explained with steps, pseudocode, and references. No dedicated interactive simulator is included for it yet."}</p></div><div class="body">${canRun?`<div class="lab-top"><label for="labInput">Input values</label><button class="btn" data-action="reset-lab" data-id="${esc(id)}">Reset sample</button><button class="btn primary" data-action="run-lab" data-id="${esc(id)}">Run lab</button></div><textarea class="lab-input" id="labInput" spellcheck="false" aria-label="Interactive lab input">${esc(savedInput)}</textarea><div class="label">Simulation result</div><div class="lab-output" id="labOutput" role="status">Run the lab to see the result.</div><p class="muted lab-note">Input format: follow the sample lines or adjust the values described in the lesson. Very large inputs are capped to keep the page responsive.</p>`:`<div class="notice info"><strong>Concept mode:</strong> Use the pseudocode and references below. The browser does not run distributed protocol implementations or Python code.</div>`}</div></section></div>
+    <div class="tab-panel hidden" data-panel="code"><section class="panel"><div class="panel-head"><h2>Pseudocode</h2><p>Language-independent outline of the algorithm.</p></div><div class="body"><pre class="pseudo">${esc(lesson.pseudo||"No pseudocode was supplied for this lesson.")}</pre></div></section>${code?`<section class="panel"><div class="code-head"><div><strong>Python example</strong><div class="muted" style="font-size:11px">Reference implementation. It is displayed, not executed by this HTML file.</div></div><button class="btn" data-action="copy-code" data-code="${esc(lesson.codeKey||demo)}">Copy code</button></div><pre class="code-view">${esc(code.python)}</pre><div class="code-foot"><span>Python 3 · inspect and adapt before using</span><span>${code.python.split("\n").length} lines</span></div></section>`:`<section class="panel"><div class="panel-head"><h2>Implementation notes</h2></div><div class="body"><p class="muted">This lesson focuses on protocol reasoning. Start from the pseudocode, then implement and test each state transition under the documented failure model.</p></div></section>`}</div>
+    <div class="tab-panel hidden" data-panel="references"><section class="panel"><div class="panel-head"><h2>References and further reading</h2><p>Books, papers, standards, and documentation connected to this lesson.</p></div><div class="body"><div class="references">${refs||"<p class='muted'>No references were listed for this lesson.</p>"}</div></div></section></div>
+    <div class="footer"><span>Lesson ${index} of ${LESSONS.length}</span><span>AZNUR Parallel &amp; Distributed Lab</span></div>`;
+  if(canRun){try{const output=RUNNERS[demo](savedInput,lesson);$("#labOutput").textContent=output;}catch(err){$("#labOutput").textContent="Ready to run. " + (err.message||"");}}
+}
+function selectTab(name){
+  $$(".tab").forEach(b=>{const active=b.dataset.tab===name;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active));});
+  $$(".tab-panel").forEach(p=>p.classList.toggle("hidden",p.dataset.panel!==name));
+}
+function parseInputNums(input,minCount=0){const n=numberList(input);if(n.length<minCount)throw new Error(`Please provide at least ${minCount} numeric value(s).`);return n;}
+function wordCounts(text){const counts=new Map();const words=String(text).toLowerCase().match(/[\p{L}\p{N}_'-]+/gu)||[];for(const word of words)counts.set(word,(counts.get(word)||0)+1);return [...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));}
+function hash32(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+const RUNNERS={
+ amdahl(input){const v=parseInputNums(input,2),s=clamp(v[0],0,1),processors=v.slice(1).map(x=>Math.floor(clamp(x,1,100000)));const pList=processors.length?processors:[1,2,4,8];const out=[`Serial fraction s = ${fmt(s)} (${fmt(s*100)}%)`,`Parallel fraction = ${fmt(1-s)}`,"","Processors | Amdahl fixed-size | Gustafson scaled-size",...pList.map(p=>`${String(p).padStart(10)} | ${fmt(1/(s+(1-s)/p)).padStart(16)} | ${fmt(s+(1-s)*p).padStart(21)}`),"",`Amdahl limit as processors → ∞: ${s===0?"unbounded in this idealized model":fmt(1/s)}x`];return out.join("\n");},
+ race(input){const v=parseInputNums(input,2),ops=Math.floor(clamp(v[0],1,1e9)),threads=Math.floor(clamp(v[1],1,10000));return [`Shared counter illustration`,`Threads: ${threads}`,`Increments per thread: ${ops}`,`Expected total: ${threads*ops}`,"","Broken interleaving:","  Thread A reads 0","  Thread B reads 0","  Thread A writes 1","  Thread B writes 1","  Final counter is 1, so one increment is lost.","","Possible fixes: atomic increment, mutex-protected update, or per-thread counters followed by a reduction.","Note: the HTML demonstrates a possible interleaving; it does not create real racing threads."] .join("\n");},
+ reduce(input){const a=parseInputNums(input,1).slice(0,100000);let levels=a.slice(),depth=0;const sequential=a.reduce((x,y)=>x+y,0);while(levels.length>1){const next=[];for(let i=0;i<levels.length;i+=2)next.push(i+1<levels.length?levels[i]+levels[i+1]:levels[i]);levels=next;depth++;}return [`Input: [${a.map(fmt).join(", ")}]`,`Sequential sum: ${fmt(sequential)}`,`Tree-reduction sum: ${fmt(levels[0])}`,`Values combined: ${Math.max(0,a.length-1)}`,`Tree depth: ${depth} level(s)`,`Idealized work: O(n)`, `Idealized span: O(log n)`,"For floating-point data, different grouping can change the final rounded value."].join("\n");},
+ scan(input){const a=parseInputNums(input,1).slice(0,50000);let sum=0;const inclusive=a.map(x=>(sum+=x));sum=0;const exclusive=a.map(x=>{const before=sum;sum+=x;return before;});return [`Input:     [${a.map(fmt).join(", ")}]`,`Inclusive: [${inclusive.map(fmt).join(", ")}]`,`Exclusive: [${exclusive.map(fmt).join(", ")}]`,`Total sum: ${fmt(sum)}`,"Inclusive includes the current item; exclusive does not."].join("\n");},
+ blelloch(input){const a=parseInputNums(input,1).slice(0,4096);const out=[];let sum=0;for(const x of a){out.push(sum);sum+=x;}const incl=a.map((_,i)=>out[i]+a[i]);return [`Input:     [${a.map(fmt).join(", ")}]`,`Hillis-Steele inclusive result: [${incl.map(fmt).join(", ")}]`,`Blelloch-style exclusive result: [${out.map(fmt).join(", ")}]`,`Sum: ${fmt(sum)}`,"This output compares definitions. A production Blelloch implementation pads to a supported tree size and applies up-sweep/down-sweep with an associative operator."] .join("\n");},
+ "producer-consumer"(input){const v=parseInputNums(input,2),capacity=Math.floor(clamp(v[0],1,1000)),items=Math.floor(clamp(v[1],1,1000));const q=[],log=[];let produced=0,consumed=0;while(consumed<items){if(produced<items&&q.length<capacity){q.push(produced);log.push(`Producer puts item ${produced}; queue=[${q.join(", ")}]`);produced++;}if(q.length){const x=q.shift();log.push(`Consumer gets item ${x}; queue=[${q.join(", ")}]`);consumed++;}if(log.length>60){log.push("… remaining events omitted");break;}}return [`Queue capacity: ${capacity}`,`Items: ${items}`,"",...log,`\nProduced: ${produced}; consumed: ${consumed}`].join("\n");},
+ barrier(input){const v=parseInputNums(input,2),workers=Math.floor(clamp(v[0],1,256)),phases=Math.floor(clamp(v[1],1,100));const out=[`Workers: ${workers}`,`Phases: ${phases}`,""];for(let p=1;p<=phases;p++)out.push(`Phase ${p}: ${workers} workers compute → all arrive at barrier → all released`);return out.concat(["",`Total arrivals: ${workers*phases}`,"A real reusable barrier also needs careful handling of phase generations and failed participants."]).join("\n");},
+ "cas-counter"(input){const v=parseInputNums(input,2),increments=Math.floor(clamp(v[0],1,1e9)),workers=Math.floor(clamp(v[1],1,10000));const idealRetries=Math.max(0,Math.round(increments*Math.log2(workers)*0.15));return [`Target increments: ${increments}`,`Workers: ${workers}`,`Final counter if every CAS succeeds: ${increments}`,`Illustrative contention retries: about ${idealRetries}`,"", "CAS succeeds only if the value still matches the expected value. On failure, reread the value and recompute the update.","Retry count is a rough teaching estimate, not a measured property of this browser."] .join("\n");},
+ "fork-join"(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],1,1e9)),workers=Math.floor(clamp(v[1],1,100000));const depth=Math.ceil(Math.log2(n)),leaves=Math.min(n,workers*4);return [`Problem size: ${n} independent units`,`Workers: ${workers}`,`Ideal balanced split depth: ${depth}`,`Approximate tasks at a ${workers}-worker target: ${leaves}`,`Sequential work lower bound: Ω(n)`,"The available parallelism depends on the task dependency graph. Task creation and joining have runtime overhead; small tasks may be slower than sequential execution."].join("\n");},
+ "work-stealing"(input){const v=parseInputNums(input,2),workers=Math.floor(clamp(v[0],1,256)),tasks=Math.floor(clamp(v[1],0,100000));const queues=Array.from({length:workers},()=>[]);for(let t=0;t<tasks;t++)queues[t%workers].push(t);const done=Array(workers).fill(0);let steals=0;while(queues.some(q=>q.length)){for(let w=0;w<workers;w++){if(queues[w].length){queues[w].pop();done[w]++;}else{let found=-1;for(let d=1;d<workers;d++){const j=(w+d)%workers;if(queues[j].length){found=j;break;}}if(found>=0){queues[found].shift();done[w]++;steals++;}}}}return [`Workers: ${workers}`,`Tasks processed: ${done.reduce((a,b)=>a+b,0)}`,`Illustrative steals: ${steals}`,"Tasks completed per worker:",...done.map((n,i)=>`  Worker ${i}: ${n}`),"This deterministic model illustrates load balancing, not a production deque implementation."] .join("\n");},
+ bsp(input){const v=parseInputNums(input,2),workers=Math.floor(clamp(v[0],1,10000)),steps=Math.floor(clamp(v[1],1,1000));return [`Workers/processes: ${workers}`,`Supersteps: ${steps}`,"",...Array.from({length:steps},(_,i)=>`Step ${i+1}: local work → message exchange → barrier`),"",`Total logical barriers: ${steps}`,"BSP performance is often modelled as work + communication cost + barrier latency. The barrier is not free."].join("\n");},
+ "parallel-matmul"(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],1,8)),tile=Math.floor(clamp(v[1],1,n));const A=Array.from({length:n},(_,i)=>Array.from({length:n},(_,k)=>i+k+1)),B=Array.from({length:n},(_,k)=>Array.from({length:n},(_,j)=>k+j+1));const C=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>A[i].reduce((s,a,k)=>s+a*B[k][j],0)));return [`Matrix size: ${n} × ${n}`,`Tile size: ${tile} × ${tile}`,`Output tiles: ${Math.ceil(n/tile)**2}`,`Multiply-accumulate operations: ${n**3}`,"Matrix A:",...A.map(r=>"  "+r.join(" ")),"Matrix B:",...B.map(r=>"  "+r.join(" ")),"Result C = A × B:",...C.map(r=>"  "+r.join(" ")),"", "The browser demo uses tiny deterministic matrices. For large matrices, use an optimized numerical library."] .join("\n");},
+ "domain-decomposition"(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],2,100)),parts=Math.floor(clamp(v[1],1,n)),iters=Math.floor(clamp(v[2]??5,1,30));let u=Array(n).fill(0);u[n-1]=100;const out=[`Cells: ${n}`,`Subdomains: ${parts}`,`Relaxation iterations: ${iters}`,`Approximate cells per subdomain: ${Math.ceil(n/parts)}`,""];for(let it=0;it<iters;it++){const old=u.slice();for(let i=1;i<n-1;i++)u[i]=(old[i-1]+old[i+1])/2;}const blocks=[];for(let p=0;p<parts;p++){const lo=Math.floor(p*n/parts),hi=Math.floor((p+1)*n/parts);blocks.push(`  Subdomain ${p+1}: cells ${lo}..${Math.max(lo,hi-1)}; boundary values ${fmt(u[Math.max(0,lo-1)])}, ${fmt(u[Math.min(n-1,hi)])}`);}out.push("Partition layout:",...blocks,"",`Approximate 1D field: [${u.map(x=>Number(x.toFixed(2))).join(", ")}]`,"Real domain-decomposition solvers exchange interface or ghost-cell values at each iteration and may need a coarse-grid correction.");return out.join("\n");},
+ mapreduce(input){const rows=lines(input);const counts=wordCounts(rows.join(" "));return [`Input lines: ${rows.length}`,`Distinct words: ${counts.length}`,"", "Map output (first 30 tokens):",...((rows.join(" ").toLowerCase().match(/[\p{L}\p{N}_'-]+/gu)||[]).slice(0,30).map(w=>`  (${w}, 1)`)),"", "Shuffle + reduce counts:",...counts.slice(0,60).map(([w,c])=>`  ${w}: ${c}`),counts.length>60?"… more keys omitted":"", "A combiner can aggregate local counts before the shuffle to reduce network traffic."].filter(Boolean).join("\n");},
+ spark(input){const rows=lines(input),text=rows.map(line=>line.replace(/^\d+\s+/,"")).join(" "),counts=wordCounts(text);return [`Input records: ${rows.length}`,"Execution DAG:","  Read → map(lowercase/tokenize) → reduceByKey(sum) → collect", "", "Transformations are lazy. The final action triggers a job.","A shuffle boundary can split the DAG into separate stages.","", "Word counts:",...counts.slice(0,50).map(([w,c])=>`  ${w}: ${c}`)].join("\n");},
+ shuffle(input){const l=lines(input),records=Math.floor(clamp(num(l[0],20),1,100000)),parts=Math.floor(clamp(num(l[1],4),1,256)),keys=(l[2]||"alpha,beta,gamma,delta,epsilon,hot,hot,hot").split(",").map(x=>x.trim()).filter(Boolean);const sizes=Array(parts).fill(0),hot=Array(parts).fill(0);for(let i=0;i<records;i++){const key=keys[i%keys.length]||`key${i}`;const p=hash32(key)%parts;sizes[p]++;if(key==="hot")hot[p]++;}return [`Records: ${records}`,`Partitions: ${parts}`,"","Partition | Records | hot-key records",...sizes.map((n,i)=>`${String(i).padStart(9)} | ${String(n).padStart(7)} | ${hot[i]}`),"","Uneven counts indicate possible data skew. A stable hash is used here so results are repeatable; Python's built-in hash may vary between processes."] .join("\n");},
+ "vector-clock"(input){const l=lines(input),n=Math.floor(clamp(num(l[0],3),1,26)),names=Array.from({length:n},(_,i)=>String.fromCharCode(65+i)),clocks=names.map(()=>Array(n).fill(0)),out=[`Processes: ${names.join(", ")}`,""];for(const line of l.slice(1)){const m=line.match(/^([A-Z])\s+(?:sends?|->)\s+([A-Z])$/i);if(!m)continue;const from=m[1].toUpperCase(),to=m[2].toUpperCase(),i=names.indexOf(from),j=names.indexOf(to);if(i<0||j<0)continue;clocks[i][i]++;const msg=clocks[i].slice();for(let k=0;k<n;k++)clocks[j][k]=Math.max(clocks[j][k],msg[k]);clocks[j][j]++;out.push(`${from} sends to ${to}: message timestamp [${msg.join(", ")}]`,`  ${to} after receive: [${clocks[j].join(", ")}]`);}out.push("","If neither vector is componentwise <= the other, the represented events are concurrent.");return out.join("\n");},
+ hlc(input){const v=parseInputNums(input,3),physical=Math.floor(v[0]),remotePhysical=Math.floor(v[1]),remoteCounter=Math.floor(clamp(v[2],0,1e9));const local=[physical-5,1],remote=[remotePhysical,remoteCounter],now=physical;const L=Math.max(now,local[0],remote[0]);let C;if(L===local[0]&&L===remote[0])C=Math.max(local[1],remote[1])+1;else if(L===local[0])C=local[1]+1;else if(L===remote[0])C=remote[1]+1;else C=0;return [`Assumed local timestamp before receive: (${local[0]}, ${local[1]})`,`Incoming timestamp: (${remote[0]}, ${remote[1]})`,`Local physical clock now: ${now}`,`HLC after receive: (${L}, ${C})`,"The physical component advances when possible. The logical counter preserves ordering when physical timestamps tie or move backward."] .join("\n");},
+ "chandy-lamport"(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],2,10)),messages=Math.floor(clamp(v[1],0,30)),out=[`Processes: ${n}`,`Illustrative messages in system: ${messages}`,"","1. Initiator P0 records its local state and sends markers."];for(let i=1;i<n;i++)out.push(`${i+2}. P${i} records local state on first marker and forwards markers on outgoing channels.`);out.push(`${n+2}. Each incoming channel records messages until its marker arrives.`,"","Snapshot records:",...Array.from({length:n},(_,i)=>`  P${i}: local state recorded; ${Math.max(0,Math.floor(messages/n))} illustrative in-flight message(s) per channel`),"","This is a timeline illustration, not a full asynchronous channel-level implementation. The real algorithm relies on reliable FIFO channels.");return out.join("\n");},
+ paxos(input){const l=lines(input),n=Math.floor(clamp(num(l[0],5),1,101)),proposal=(l[1]||"A").slice(0,100),quorum=Math.floor(n/2)+1;return [`Single-decree Paxos walkthrough`, `Acceptors: ${n}`,`Proposal value: ${proposal}`,`Majority quorum: ${quorum}`,"","1. Proposer sends PREPARE with a proposal number.",`2. If at least ${quorum} acceptors promise, proposer may send ACCEPT.`, `3. In this no-prior-accepted-value example, acceptors accept ${JSON.stringify(proposal)}.`, `4. Once ${quorum} acceptors accept the proposal, the value is chosen.`,"","This is a teaching model of one successful round. Real Paxos must preserve previously accepted values and handle competing proposers, retries, message loss, and crashes."] .join("\n");},
+ replication(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],1,100)),ops=Math.floor(clamp(v[1],1,100));const q=Math.floor(n/2)+1;const out=[`Replicas: ${n}`,`Operations: ${ops}`,`Majority quorum: ${q}`,""];for(let i=1;i<=ops;i++)out.push(`Entry ${i}: append op-${i} at leader → replicate to ${n-1} follower(s) → ${n} acknowledgements → commit`);out.push("","This abstracts the state-machine replication pattern. Viewstamped Replication and Zab have different detailed view-change and recovery rules.");return out.join("\n");},
+ raft(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],1,101)),rounds=Math.floor(clamp(v[1],1,1e5)),candidate=(rounds*7+3)%n,quorum=Math.floor(n/2)+1;return [`Raft election walkthrough`,`Cluster size: ${n}`,`Illustrative timeout seed: ${rounds}`,`Candidate: node ${candidate}`,`Votes in a fully connected cluster: ${n}`,`Majority required: ${quorum}`,`Result: ${n>=quorum?`node ${candidate} can become leader in this simplified scenario`:"no majority is possible"}`,"","This demonstrates the majority rule, not a full Raft implementation. Real Raft also checks log freshness, persists terms and votes, and steps down when it learns of a higher term."] .join("\n");},
+ chain(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],1,100)),writes=Math.floor(clamp(v[1],1,100));const out=[`Replicas in chain: ${n}`,`Writes: ${writes}`,""];for(let i=1;i<=writes;i++)out.push(`write-${i}: head accepts → forwards through ${Math.max(0,n-1)} follower(s) → tail acknowledges → commit`);out.push("","A chain-replication design commonly serves reads from the tail so clients observe committed state. Failover and reconfiguration require additional protocol rules.");return out.join("\n");},
+ "2pc"(input){const v=parseInputNums(input,1),n=Math.floor(clamp(v[0],1,100)),fail=Math.floor(v[1]??0),out=[`Participants: ${n}`,`Simulated no-vote participant: ${fail>=1&&fail<=n?fail:"none"}`,"","Phase 1: PREPARE"];for(let i=1;i<=n;i++)out.push(`  P${i} → ${i===fail?"NO / cannot prepare":"YES / prepared"}`);const commit=!(fail>=1&&fail<=n);out.push("",`Phase 2: ${commit?"COMMIT":"ABORT"}`,...Array.from({length:n},(_,i)=>`  P${i+1}: ${commit?"committed":"aborted"}`),"","Two-phase commit can block if the coordinator fails while participants are prepared. Three-phase commit adds a pre-commit phase but needs stronger timing and failure assumptions.");return out.join("\n");},
+ swim(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],2,100)),rounds=Math.floor(clamp(v[1],1,10000)),failed=(rounds*13+1)%n;return [`Nodes: ${n}`,`Probe rounds: ${rounds}`,`Illustrative failed node: ${failed}`,`Direct probes attempted: ${rounds}`,`Indirect probes may be tried after a direct timeout.`,"","After repeated failed probes, peers may mark the node suspected, then dead. Suspicion is a failure detector signal, not mathematical proof that a process has crashed.","This is a simplified teaching model, not the full SWIM membership protocol or phi-accrual detector."] .join("\n");},
+ merkle(input){const count=Math.floor(clamp(num(lines(input)[0],8),1,1024));let level=Array.from({length:count},(_,i)=>hash32(`leaf-${i}`).toString(16).padStart(8,"0"));const initial=level.slice();const out=[`Leaves: ${count}`,"Leaf fingerprints:",...level.slice(0,16).map((h,i)=>`  leaf-${i}: ${h}`)];while(level.length>1){if(level.length%2)level.push(level[level.length-1]);const next=[];for(let i=0;i<level.length;i+=2)next.push(hash32(level[i]+level[i+1]).toString(16).padStart(8,"0"));level=next;}const root=level[0];initial[Math.floor(count/2)]="changed-leaf";level=initial.map(x=>hash32(x).toString(16).padStart(8,"0"));while(level.length>1){if(level.length%2)level.push(level[level.length-1]);const next=[];for(let i=0;i<level.length;i+=2)next.push(hash32(level[i]+level[i+1]).toString(16).padStart(8,"0"));level=next;}out.push("",`Illustrative root: ${root}`,`Root after one leaf changes: ${level[0]}`,"","The visualizer uses a small non-cryptographic hash so it works offline and quickly. Production Merkle trees must use a collision-resistant cryptographic hash and a clearly defined tree encoding.");return out.join("\n");},
+ "consistent-hashing"(input){const v=parseInputNums(input,3),keysCount=Math.floor(clamp(v[0],1,100000)),vnodes=Math.floor(clamp(v[1],1,1000)),n=Math.floor(clamp(v[2],1,100));const makeRing=nodes=>{const ring=[];nodes.forEach(node=>{for(let i=0;i<vnodes;i++)ring.push({point:hash32(`${node}-${i}`),node});});return ring.sort((a,b)=>a.point-b.point);};const owner=(ring,key)=>{const h=hash32(key);return (ring.find(x=>x.point>=h)||ring[0]).node;};const oldNodes=Array.from({length:n},(_,i)=>`N${i}`),newNodes=[...oldNodes,`N${n}`],r1=makeRing(oldNodes),r2=makeRing(newNodes);let moved=0;const counts={};for(let i=0;i<Math.min(keysCount,100000);i++){const key=`key-${i}`,a=owner(r1,key),b=owner(r2,key);if(a!==b)moved++;counts[b]=(counts[b]||0)+1;}return [`Keys tested: ${keysCount}`,`Virtual nodes per server: ${vnodes}`,`Servers before / after: ${n} / ${n+1}`,`Keys reassigned when one server is added: ${moved} (${(moved/keysCount*100).toFixed(2)}%)`,"New ownership counts:",...Object.entries(counts).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,x])=>`  ${k}: ${x}`),"","This deterministic 32-bit hash is used only for illustration. More virtual nodes generally smooth distribution; hot keys remain a separate problem."].join("\n");},
+ chord(input){const v=parseInputNums(input,4),bits=Math.floor(clamp(v[0],4,20)),n=Math.floor(clamp(v[1],2,1000)),key=Math.floor(clamp(v[2],0,2**bits-1)),requested=Math.floor(clamp(v[3],1,10000)),space=2**bits,nodes=Array.from({length:n},(_,i)=>Math.floor(i*space/n)).sort((a,b)=>a-b),owner=nodes.find(x=>x>=key)??nodes[0];const hops=Math.min(n,Math.ceil(Math.log2(n))+1);return [`Identifier bits: ${bits}`,`Ring size: ${space}`,`Nodes: ${nodes.join(", ")}`,`Key ID: ${key}`,`Successor responsible for key: ${owner}`,`Illustrative lookup budget: ${requested}`,`Typical lookup scaling: O(log n), around ${hops} hops for ${n} well-maintained nodes`,"","This uses evenly spaced node IDs to keep the visual deterministic. Real Chord uses hashed identifiers, finger tables, and stabilization under churn."] .join("\n");},
+ kademlia(input){const v=parseInputNums(input,4),bits=Math.floor(clamp(v[0],4,20)),n=Math.floor(clamp(v[1],2,1000)),k=Math.floor(clamp(v[2],1,100)),target=Math.floor(clamp(v[3],0,2**bits-1)),space=2**bits,nodes=Array.from({length:n},(_,i)=>Math.floor((i+0.37)*space/n)),ranked=nodes.map(node=>({node,distance:(node^target)>>>0})).sort((a,b)=>a.distance-b.distance);return [`ID bits: ${bits}`,`Nodes: ${n}`,`Bucket size k: ${k}`,`Target ID: ${target}`,"Closest peers by XOR distance:",...ranked.slice(0,Math.min(k,8)).map(x=>`  node ${x.node}: distance ${x.distance} (binary ${x.distance.toString(2).padStart(bits,"0")})`),"","Kademlia repeatedly queries a small alpha-sized set of the closest known peers until no closer peer is found. This is a static lookup illustration, not a live network simulation."].join("\n");},
+ leader(input){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],2,10000)),initiator=Math.floor(clamp(v[1],0,n-1)),higher=n-initiator-1;return [`Processes: P0 to P${n-1}`,`Election initiator: P${initiator}`,`Higher-ID processes notified: ${higher}`,`OK replies expected: ${higher}`,`Elected leader under the no-failure bully model: P${n-1}`,`Approximate messages in this simple bully run: ${higher*2+1}`,"","In Chang-Roberts, candidate IDs move around a ring and the highest participating ID wins. Partitions or failures can change the assumptions and require recovery logic."] .join("\n");},
+ crdt(input){const l=lines(input),type=(l[0]||"counter").toLowerCase(),replicas=(l[1]||"A B C").split(/[\s,]+/).filter(Boolean).slice(0,20);if(type.includes("set")){const sets=replicas.map((r,i)=>({r,values:[`${r}-item`,...(i===0?["shared"]:[])]}));return [`CRDT type: grow-only set`,`Replicas: ${replicas.join(", ")}`,"Local sets:",...sets.map(s=>`  ${s.r}: {${s.values.join(", ")}}`),`Merged set: {${[...new Set(sets.flatMap(s=>s.values))].join(", ")}}`,"The merge takes the set union, which is associative, commutative, and idempotent."].join("\n");}const counts=Object.fromEntries(replicas.map((r,i)=>[r,i+1]));return [`CRDT type: grow-only counter (G-Counter)`,`Replicas: ${replicas.join(", ")}`,"Local increments:",...Object.entries(counts).map(([r,c])=>`  ${r}: ${c}`),`Merged counter: ${Object.values(counts).reduce((a,b)=>a+b,0)}`,"Merge rule: take the component-wise maximum, then sum the components. This differs from simply adding replica totals, which could double-count duplicated state."] .join("\n");},
+ "bft-quorum"(input,lesson){const v=parseInputNums(input,2),n=Math.floor(clamp(v[0],1,10000)),requestedF=Math.floor(clamp(v[1],0,10000)),maxF=Math.floor((n-1)/3),f=Math.min(requestedF,maxF),quorum=2*f+1;return [`Topic: ${lesson.title}`,`Replicas n: ${n}`,`Faults requested f: ${requestedF}`,`Maximum Byzantine faults satisfying n ≥ 3f + 1: ${maxF}`,`Configured f: ${f}`,`Byzantine quorum: ${quorum}`,`n ≥ 3f + 1 holds for configured f: ${n>=3*f+1}`,"","For the classical Byzantine model, at least 3f+1 replicas and 2f+1 votes are commonly required. Exact thresholds depend on the protocol and its assumptions. A simple majority is not enough for arbitrary Byzantine faults."] .join("\n");},
+ rcu(input){const v=parseInputNums(input,2),readers=Math.floor(clamp(v[0],1,100)),updates=Math.floor(clamp(v[1],1,100));return [`Active readers before update: ${readers}`,`Writer updates: ${updates}`,"","1. Writer publishes a replacement pointer.",`2. Old versions are retired, but are not freed while readers may still hold them.`,`3. After each relevant reader exits, the grace period can complete.`,`4. Old storage is reclaimed only when no pre-existing reader can access it.`,"","Hazard pointers use published per-thread pointers instead of an RCU grace period. Both require strict memory-lifetime rules."] .join("\n");},
+ epoch(input){const v=parseInputNums(input,2),threads=Math.floor(clamp(v[0],1,1000)),stalled=Math.floor(clamp(v[1],0,threads));const active=Array.from({length:threads},(_,i)=>i<stalled?1:3);return [`Threads: ${threads}`,`Threads still pinned to old epoch: ${stalled}`,`Example active epochs: [${active.slice(0,30).join(", ")}${threads>30?", …":""}]`,`Can reclaim epoch-1 objects now: ${stalled===0?"yes, assuming all other reclamation conditions hold":"no"}`,"","A stalled reader can delay reclamation and allow retired memory to accumulate. Epoch protocols also require careful ordering when a thread announces that it has entered a read-side critical section."] .join("\n");}
+};
+
+function initChapterFilter(){const sel=$("#chapterFilter");for(const ch of CHAPTERS){const opt=document.createElement("option");opt.value=ch.id;opt.textContent=ch.title;sel.appendChild(opt);}}
+function exportData(){const payload={app:"AZNUR Parallel & Distributed Lab",version:1,exportedAt:new Date().toISOString(),current:state.current,completed:[...state.completed],theme:state.theme,answers:state.answers,notes:state.notes};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="aznur-parallel-distributed-progress.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Progress exported as JSON.");}
+function importData(file){const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(String(reader.result));if(!data||typeof data!=="object"||!Array.isArray(data.completed))throw new Error("This file is not a supported progress export.");state.completed=new Set(data.completed.filter(id=>byId[id]));state.current=byId[data.current]?data.current:"";state.theme=["light","dark","system"].includes(data.theme)?data.theme:"dark";state.answers=data.answers&&typeof data.answers==="object"?data.answers:{};state.notes=data.notes&&typeof data.notes==="object"?data.notes:{};saveState();setTheme(state.theme);renderTree();state.current?renderLesson(state.current):renderHome();toast("Progress imported.");}catch(err){toast(err.message||"Could not import that file.");}};reader.onerror=()=>toast("Could not read the selected file.");reader.readAsText(file);}
+function runCurrentLab(id){const lesson=byId[id],input=$("#labInput");if(!lesson||!input)return;state.answers[id]=input.value;saveState();try{const result=RUNNERS[getDemoKey(lesson)](input.value,lesson);$("#labOutput").textContent=result;selectTab("lab");}catch(err){$("#labOutput").textContent=`Input error: ${err.message||"Check the format and try again."}`;selectTab("lab");}}
+function copyText(text){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>toast("Copied to clipboard.")).catch(()=>fallbackCopy(text));}else fallbackCopy(text);}
+function fallbackCopy(text){const temp=document.createElement("textarea");temp.value=text;temp.style.position="fixed";temp.style.opacity="0";document.body.appendChild(temp);temp.select();try{document.execCommand("copy");toast("Copied to clipboard.");}catch(_){toast("Copy failed. Select the code and copy it manually.");}temp.remove();}
+function handleAction(action,el){const id=el.dataset.id||state.current;switch(action){case"continue":renderLesson(LESSONS.find(l=>!state.completed.has(l.id))?.id||LESSONS[0].id);break;case"progress":renderProgress();break;case"toggle-complete":if(state.completed.has(id))state.completed.delete(id);else state.completed.add(id);saveState();renderLesson(id);toast(state.completed.has(id)?"Lesson marked complete.":"Lesson marked incomplete.");break;case"next":{const i=LESSONS.findIndex(l=>l.id===state.current);if(i<LESSONS.length-1)renderLesson(LESSONS[i+1].id);break;}case"prev":{const i=LESSONS.findIndex(l=>l.id===state.current);if(i>0)renderLesson(LESSONS[i-1].id);break;}case"run-lab":runCurrentLab(id);break;case"reset-lab":{const l=byId[id];$("#labInput").value=l.sample||sampleDefaults[getDemoKey(l)]||"";runCurrentLab(id);break;}case"save-note":state.notes[id]=$("#lessonNote")?.value||"";saveState();toast("Notes saved.");break;case"copy-code":{const l=byId[state.current],code=CODE[l?.codeKey||getDemoKey(l)]||CODE[getDemoKey(l)];if(code)copyText(code.python);else toast("No Python example is available for this lesson.");break;}case"reset-progress":if(confirm("Reset all completed lessons? Your notes and lab inputs will be kept.")){state.completed.clear();saveState();renderProgress();toast("Completion progress reset.");}break;}}
+document.addEventListener("click",event=>{const tab=event.target.closest("[data-tab]");if(tab){selectTab(tab.dataset.tab);return;}const link=event.target.closest("[data-lesson]");if(link){renderLesson(link.dataset.lesson);return;}const chapter=event.target.closest("[data-chapter]");if(chapter){$("#chapterFilter").value=chapter.dataset.chapter;renderTree();const ch=CHAPTERS.find(c=>c.id===chapter.dataset.chapter);const first=ch&&ch.ids.map(id=>byId[id]).find(Boolean);if(first)renderLesson(first.id);return;}const action=event.target.closest("[data-action]");if(action){handleAction(action.dataset.action,action);return;}const page=event.target.closest("[data-page]");if(page){page.dataset.page==="progress"?renderProgress():renderHome();}});
+$("#searchInput").addEventListener("input",renderTree);$("#chapterFilter").addEventListener("change",renderTree);$("#themeSelect").addEventListener("change",e=>setTheme(e.target.value));$("#printBtn").addEventListener("click",()=>window.print());$("#exportBtn").addEventListener("click",exportData);$("#importBtn").addEventListener("click",()=>$("#importFile").click());$("#importFile").addEventListener("change",e=>{const file=e.target.files?.[0];if(file)importData(file);e.target.value="";});$("#homeLink").addEventListener("click",e=>{e.preventDefault();state.current="";saveState();renderTree();renderHome();});
+document.addEventListener("keydown",e=>{if(e.key==="/"&&!/input|textarea|select/i.test(document.activeElement.tagName)){e.preventDefault();$("#searchInput").focus();}if(e.key==="Escape"&&document.activeElement===$("#searchInput")){$("#searchInput").value="";renderTree();$("#searchInput").blur();}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();exportData();}});
+if(typeof matchMedia==="function")matchMedia("(prefers-color-scheme: light)").addEventListener?.("change",()=>{if(state.theme==="system")setTheme("system");});
+loadState();initChapterFilter();setTheme(state.theme);updateProgress();renderTree();if(state.current)renderLesson(state.current);else renderHome();
+</script></body></html>
